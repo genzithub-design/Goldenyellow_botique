@@ -1,0 +1,106 @@
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Navbar, Footer, TrueFocus, ScrollToTop } from './components';
+
+// Pages
+import Home from './pages/Home';
+import Collections from './pages/Collections';
+import CategoryPage from './pages/CategoryPage';
+import SareeDetailPage from './pages/SareeDetailPage';
+import About from './pages/About';
+import Contact from './pages/Contact';
+
+export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (isLoading) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isLoading]);
+
+  useEffect(() => {
+    // End loader after 2.6 seconds (allows the words to animate fully once)
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2600);
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <Router>
+      <ScrollToTop />
+      <AnimatePresence mode="wait">
+        {isLoading && (
+          <motion.div
+            key="loader"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.6, ease: [0.43, 0.13, 0.23, 0.96] }}
+            className="fixed inset-0 w-screen h-screen z-[9999] flex flex-col items-center justify-center bg-[#25030a] text-center overflow-hidden"
+          >
+            {/* Grain background overlay inside */}
+            <div className="absolute inset-0 grain-bg pointer-events-none opacity-40 z-0" />
+
+            {/* Elegant visual backdrop design */}
+            <div className="absolute w-[40vw] h-[40vw] rounded-full bg-gold-accent/5 blur-[120px] pointer-events-none z-0" />
+            
+            <div className="relative z-10 flex flex-col items-center gap-6">
+              <span className="text-[10px] uppercase tracking-[0.35em] text-gold-accent opacity-80">
+                Heritage Handlooms
+              </span>
+              
+              <TrueFocus 
+                sentence="Golden Yellow Boutique"
+                manualMode={false}
+                blurAmount={6}
+                borderColor="#D4AF37"
+                glowColor="rgba(212, 175, 55, 0.4)"
+                animationDuration={0.6}
+                pauseBetweenAnimations={0.4}
+              />
+              
+              <div className="w-16 h-[1px] bg-gold-accent/20 mt-2 animate-pulse" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <div className="min-h-screen flex flex-col justify-between bg-gradient-to-b from-[#fbf8f3] via-[#f5efe4] to-[#fcfaf5] font-sans text-charcoal-800 grain-bg relative overflow-x-hidden">
+        
+        {/* Ambient background glows for all pages */}
+        <div className="absolute top-[5vh] left-[-20vw] w-[60vw] h-[60vw] bg-gold-accent/4 rounded-full blur-[130px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '9s' }} />
+        <div className="absolute top-[80vh] right-[-20vw] w-[50vw] h-[50vw] bg-burgundy-900/3 rounded-full blur-[110px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '14s' }} />
+        <div className="absolute top-[200vh] left-[10vw] w-[55vw] h-[55vw] bg-gold-accent/3 rounded-full blur-[120px] pointer-events-none z-0" />
+        <div className="absolute bottom-[5vh] right-[10vw] w-[40vw] h-[40vw] bg-burgundy-900/4 rounded-full blur-[100px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '11s' }} />
+
+        {/* Navigation Bar */}
+        <Navbar />
+
+        {/* Main Content Area */}
+        <main className="flex-grow pt-[68px] sm:pt-[76px] relative z-10">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/collections" element={<Collections />} />
+            <Route path="/collections/:category" element={<CategoryPage />} />
+            <Route path="/saree/:id" element={<SareeDetailPage />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/contact" element={<Contact />} />
+            {/* Fallback to Home */}
+            <Route path="*" element={<Home />} />
+          </Routes>
+        </main>
+
+        {/* Footer */}
+        <Footer />
+      </div>
+    </Router>
+  );
+}
+

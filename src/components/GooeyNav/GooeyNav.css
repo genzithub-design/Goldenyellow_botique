@@ -1,0 +1,192 @@
+:root {
+  --color-1: #c5a059; /* Gold */
+  --color-2: #5b0e1d; /* Burgundy */
+  --color-3: #8a2538; /* Rose/Gold-red */
+  --color-4: #25030a; /* Dark Burgundy */
+}
+
+.gooey-nav-container {
+  position: relative;
+  border-radius: 100vw;
+  background: rgba(197, 160, 89, 0.04);
+  border: 1px solid rgba(197, 160, 89, 0.1);
+  padding: 3px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.gooey-nav-container nav {
+  display: flex;
+  position: relative;
+  transform: translate3d(0, 0, 0.01px);
+}
+
+.gooey-nav-container nav ul {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  z-index: 3;
+}
+
+.gooey-nav-container nav ul li {
+  border-radius: 100vw;
+  position: relative;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.gooey-nav-container nav ul li a {
+  display: inline-block;
+  padding: 0.6rem 1.2rem;
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: #3a3a3a;
+  transition: color 0.3s ease;
+  outline: none;
+}
+
+.gooey-nav-container nav ul li a:hover {
+  color: #5b0e1d;
+}
+
+.gooey-nav-container nav ul li.active a {
+  color: #FCFAF6;
+}
+
+/* Base effect configurations */
+.gooey-nav-container .effect {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0;
+  height: 0;
+  opacity: 1;
+  pointer-events: none;
+  display: grid;
+  place-items: center;
+  z-index: 1;
+  border-radius: 100vw;
+  box-sizing: border-box;
+}
+
+.gooey-nav-container .effect.text {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: #3a3a3a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+.gooey-nav-container .effect.text.active {
+  color: #FCFAF6;
+}
+
+.gooey-nav-container .effect.filter {
+  filter: blur(5px) contrast(30) blur(0);
+  mix-blend-mode: multiply;
+}
+
+/* Light background contrast hack for the gooey filter */
+.gooey-nav-container .effect.filter::before {
+  content: '';
+  position: absolute;
+  inset: -50px;
+  z-index: -2;
+  background: transparent;
+}
+
+.gooey-nav-container .effect.filter::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #5b0e1d;
+  transform: scale(0);
+  opacity: 0;
+  z-index: -1;
+  border-radius: 100vw;
+  box-shadow: 0 4px 15px rgba(91, 14, 29, 0.2);
+}
+
+.gooey-nav-container .effect.active::after {
+  animation: pill-grow 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes pill-grow {
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Particles configuration */
+.particle,
+.point {
+  display: block;
+  opacity: 0;
+  width: 14px;
+  height: 14px;
+  border-radius: 100%;
+  transform-origin: center;
+}
+
+.particle {
+  --time: 600ms;
+  position: absolute;
+  top: calc(50% - 7px);
+  left: calc(50% - 7px);
+  animation: particle-move calc(var(--time)) cubic-bezier(0.25, 1, 0.5, 1) 1 -50ms;
+}
+
+.point {
+  background: var(--color);
+  opacity: 1;
+  animation: point-scale calc(var(--time)) cubic-bezier(0.25, 1, 0.5, 1) 1 -50ms;
+}
+
+@keyframes particle-move {
+  0% {
+    transform: rotate(0deg) translate(calc(var(--start-x)), calc(var(--start-y)));
+    opacity: 1;
+  }
+  60% {
+    transform: rotate(calc(var(--rotate) * 0.5)) translate(calc(var(--end-x) * 1.1), calc(var(--end-y) * 1.1));
+    opacity: 1;
+  }
+  80% {
+    transform: rotate(calc(var(--rotate) * 0.7)) translate(calc(var(--end-x)), calc(var(--end-y)));
+    opacity: 0.8;
+  }
+  100% {
+    transform: rotate(calc(var(--rotate))) translate(0px, 0px);
+    opacity: 0;
+  }
+}
+
+@keyframes point-scale {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  20% {
+    transform: scale(calc(var(--scale) * 0.3));
+    opacity: 0.8;
+  }
+  60% {
+    transform: scale(var(--scale));
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
