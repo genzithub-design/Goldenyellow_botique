@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ArrowRight, MessageSquare } from 'lucide-react';
+import { Menu, X, ArrowRight, MessageSquare, Sun, Moon } from 'lucide-react';
 import GooeyNav from '../GooeyNav/GooeyNav';
 
 const NAV_ITEMS = [
@@ -30,6 +30,23 @@ export default function Navbar() {
     setIsOpen(false);
   }, [location.pathname]);
 
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('theme') || 'dark';
+    }
+    return 'dark';
+  });
+
+  useEffect(() => {
+    const root = window.document.documentElement;
+    root.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  };
+
   // Find initial active index based on current path
   const initialActiveIndex = Math.max(NAV_ITEMS.findIndex(item => item.href === location.pathname), 0);
 
@@ -41,18 +58,18 @@ export default function Navbar() {
         transition={{ duration: 0.5 }}
         className={`fixed top-0 left-0 right-0 w-full z-[1000] transition-all duration-500 ${
           scrolled
-            ? 'h-16 bg-[#FCFAF6]/92 backdrop-blur-md border-b border-gold-200/20 shadow-sm'
-            : 'h-20 bg-transparent'
+            ? 'h-16 lg:h-20 bg-[var(--nav-bg)] backdrop-blur-md border-b border-gold-200/20 shadow-sm'
+            : 'h-20 lg:h-28 bg-transparent'
         }`}
       >
         <div className="max-w-[1440px] mx-auto h-full px-6 sm:px-12 lg:px-16 flex items-center justify-between">
 
           {/* 1. Left side brand logo */}
           <Link to="/" className="flex flex-col items-start leading-none group shrink-0">
-            <span className="font-serif text-lg tracking-[0.15em] font-semibold text-burgundy-800 group-hover:text-gold-accent transition-colors duration-300">
+            <span className={`font-serif text-lg lg:text-2xl tracking-[0.15em] font-semibold transition-colors duration-300 ${theme === 'dark' ? 'text-gold-accent group-hover:text-white' : 'text-burgundy-800 group-hover:text-gold-accent'}`}>
               GOLDEN YELLOW
             </span>
-            <span className="text-[7px] uppercase tracking-[0.35em] text-gold-vintage font-bold mt-0.5 group-hover:text-burgundy-900 transition-colors duration-300">
+            <span className={`text-[7px] lg:text-[9px] uppercase tracking-[0.35em] font-bold mt-0.5 transition-colors duration-300 ${theme === 'dark' ? 'text-white/50 group-hover:text-gold-accent' : 'text-gold-vintage group-hover:text-burgundy-900'}`}>
               BOUTIQUE
             </span>
           </Link>
@@ -71,25 +88,41 @@ export default function Navbar() {
             />
           </div>
 
-          {/* 3. Right side CTA button for desktop */}
-          <div className="hidden md:flex items-center shrink-0">
+          {/* 3. Right side CTA button & Theme Toggle for desktop */}
+          <div className="hidden md:flex items-center gap-4 shrink-0">
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 rounded-full border border-gold-accent/30 text-gold-vintage hover:bg-gold-accent/15 transition-all duration-300"
+              aria-label="Toggle visual theme"
+            >
+              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
             <Link
               to="/contact"
-              className="inline-flex items-center gap-2 border border-gold-accent/40 hover:border-gold-accent text-gold-vintage hover:text-burgundy-900 px-6 py-2.5 text-[9px] uppercase tracking-[0.2em] font-bold rounded-sm bg-transparent hover:bg-gold-accent transition-all duration-500 shadow-sm hover:shadow-md hover:-translate-y-0.5"
+              className={`inline-flex items-center gap-2 border border-gold-accent/40 hover:border-gold-accent px-6 py-2.5 lg:px-8 lg:py-3.5 text-[9px] lg:text-[10px] uppercase tracking-[0.2em] font-bold rounded-sm bg-transparent hover:bg-gold-accent transition-all duration-500 shadow-sm hover:shadow-md hover:-translate-y-0.5 ${theme === 'dark' ? 'text-gold-accent hover:text-[#08060A]' : 'text-gold-vintage hover:text-burgundy-900'}`}
             >
-              Book Visit <ArrowRight size={12} />
+              Book Visit <ArrowRight size={12} className="lg:w-3.5 lg:h-3.5" />
             </Link>
           </div>
 
-          {/* 4. Hamburger for small screens */}
-          <button
-            type="button"
-            onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden flex items-center justify-center p-2 text-charcoal-800 hover:text-burgundy-800 transition-colors"
-            aria-label="Toggle Navigation Menu"
-          >
-            {isOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
+          {/* 4. Theme switch & Hamburger for small screens */}
+          <div className="flex md:hidden items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full border border-gold-accent/30 text-gold-vintage hover:bg-gold-accent/10 transition-all duration-300"
+              aria-label="Toggle visual theme"
+            >
+              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsOpen(!isOpen)}
+              className={`flex items-center justify-center p-2 transition-colors ${theme === 'dark' ? 'text-gold-accent hover:text-white' : 'text-gold-vintage hover:text-burgundy-850'}`}
+              aria-label="Toggle Navigation Menu"
+            >
+              {isOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
 
         </div>
       </motion.header>

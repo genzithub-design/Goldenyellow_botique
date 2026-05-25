@@ -1,290 +1,129 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { Mail, MapPin, Phone, Clock, Video, Send, CheckCircle2 } from 'lucide-react';
+import { MessageSquare, Sparkles, Award, Compass, ShieldCheck } from 'lucide-react';
+import { Footer } from '../components';
 
 export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    preferredCollection: '',
-    inquiryType: 'general',
-    message: ''
-  });
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Simulate API request
-    setTimeout(() => {
-      setSubmitted(true);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        preferredCollection: '',
-        inquiryType: 'general',
-        message: ''
-      });
-    }, 800);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
   return (
-    <div className="bg-cream-100 min-h-screen pb-24">
+    <div className="bg-[var(--bg-primary)] min-h-screen pb-24 text-[var(--text-main)] overflow-hidden">
       
       {/* 1. HERO HEADER */}
-      <section className="bg-charcoal-900 text-cream-50 py-16 sm:py-24 relative overflow-hidden grain-bg border-b border-gold-800/40">
-        <div className="absolute inset-0 bg-gradient-to-b from-charcoal-950/40 to-charcoal-900/10 z-10" />
-        <div className="container-main relative z-20 text-center flex flex-col items-center gap-3">
-          <span className="text-[10px] uppercase tracking-[0.3em] text-gold-accent font-bold">
-            Connect with us
+      <section className="bg-[var(--bg-secondary)] text-[var(--text-main)] py-24 sm:py-32 relative overflow-hidden border-b border-[var(--border-glow)]">
+        {/* Glow Effects */}
+        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[40vw] h-[40vw] rounded-full bg-gold-accent/5 blur-[120px] pointer-events-none" />
+        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[35vw] h-[35vw] rounded-full bg-burgundy-900/10 blur-[100px] pointer-events-none animate-pulse" />
+        
+        {/* Big ghost text behind */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">
+          <span className="text-[14vw] font-black uppercase text-[var(--text-main)] opacity-[0.02] tracking-[0.1em] font-sans">
+            CONNECT
           </span>
-          <h1 className="font-serif text-4xl sm:text-6xl tracking-wide font-light">
-            Our Showrooms & Inquiries
-          </h1>
-          <p className="text-xs sm:text-sm text-cream-300 font-light max-w-xl leading-relaxed mt-2">
-            Schedule a physical boutique visit, request a personal video consultation, or inquire about our collections.
-          </p>
-          <div className="w-16 h-[1px] bg-gold-accent mt-4"></div>
         </div>
-      </section>
 
-      {/* 2. SPLIT CONTACT CONTENT */}
-      <section className="container-main pt-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+        <div className="container-main relative z-10 text-center flex flex-col items-center gap-4">
+          <span className="text-[10px] uppercase tracking-[0.35em] text-gold-accent font-extrabold px-4 py-2 rounded-full bg-[var(--bg-card)] border border-[var(--border-glow)]">
+            Connect With Us
+          </span>
           
-          {/* A. LEFT: BOUTIQUE SHOWROOM CARDS */}
-          <div className="lg:col-span-5 flex flex-col gap-8">
-            <div className="flex flex-col gap-2">
-              <span className="text-[10px] uppercase tracking-widest text-gold-vintage font-bold">
-                Visit Us
-              </span>
-              <h2 className="font-serif text-2xl sm:text-3xl text-charcoal-800 tracking-wide font-light leading-snug">
-                Our Flagship Showrooms
-              </h2>
-              <div className="w-12 h-[1px] bg-gold-vintage mt-1"></div>
-            </div>
+          <h1 className="font-sans text-5xl sm:text-7xl font-black uppercase tracking-tight text-[var(--text-main)] leading-none">
+            OUR 
+            <span className="text-transparent font-serif italic font-light lowercase text-gold-accent block sm:inline normal-case ml-0 sm:ml-4">
+              Showroom.
+            </span>
+          </h1>
 
-            {/* Boutique 1 */}
-            <div className="bg-cream-50 border border-gold-200/50 p-6 rounded-sm flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="font-serif text-xl font-medium text-charcoal-800 flex items-center gap-2 pb-2 border-b border-gold-200/20">
-                <MapPin size={18} className="text-gold-accent" /> Kanchipuram Flagship
-              </h3>
-              <div className="flex flex-col gap-2.5 text-xs text-muted leading-relaxed font-light">
-                <p>
-                  <strong>Address:</strong> 12, Temple Car Street, Kanchipuram, Tamil Nadu - 631501
-                </p>
-                <p>
-                  <strong>Phone:</strong> +91 44 2722 4567 / +91 98765 43210
-                </p>
-                <p>
-                  <strong>Hours:</strong> 10:00 AM – 08:30 PM (All Days)
-                </p>
-              </div>
-            </div>
-
-            {/* Boutique 2 */}
-            <div className="bg-cream-50 border border-gold-200/50 p-6 rounded-sm flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="font-serif text-xl font-medium text-charcoal-800 flex items-center gap-2 pb-2 border-b border-gold-200/20">
-                <MapPin size={18} className="text-gold-accent" /> Chennai Boutique
-              </h3>
-              <div className="flex flex-col gap-2.5 text-xs text-muted leading-relaxed font-light">
-                <p>
-                  <strong>Address:</strong> 45, Khader Nawaz Khan Road, Nungambakkam, Chennai, Tamil Nadu - 600006
-                </p>
-                <p>
-                  <strong>Phone:</strong> +91 44 4958 1234
-                </p>
-                <p>
-                  <strong>Hours:</strong> 10:30 AM – 09:00 PM (All Days)
-                </p>
-              </div>
-            </div>
-
-            {/* Boutique 3 */}
-            <div className="bg-cream-50 border border-gold-200/50 p-6 rounded-sm flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow">
-              <h3 className="font-serif text-xl font-medium text-charcoal-800 flex items-center gap-2 pb-2 border-b border-gold-200/20">
-                <MapPin size={18} className="text-gold-accent" /> Varanasi Heritage Suite
-              </h3>
-              <div className="flex flex-col gap-2.5 text-xs text-muted leading-relaxed font-light">
-                <p>
-                  <strong>Address:</strong> K-20/5, Chowk weavers lane, Varanasi, Uttar Pradesh - 221001
-                </p>
-                <p>
-                  <strong>Phone:</strong> +91 542 245 8899
-                </p>
-                <p>
-                  <strong>Hours:</strong> 11:00 AM – 08:00 PM (Closed on Tuesdays)
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* B. RIGHT: ELEGANT INQUIRY FORM */}
-          <div className="lg:col-span-7 bg-cream-50 border border-gold-200/50 p-8 sm:p-12 rounded-sm shadow-md">
-            {submitted ? (
-              <div className="text-center py-12 flex flex-col items-center gap-4">
-                <CheckCircle2 size={48} className="text-emerald-700 animate-bounce" />
-                <h3 className="font-serif text-2xl sm:text-3xl text-charcoal-800 font-medium">Inquiry Submitted</h3>
-                <p className="text-xs sm:text-sm text-muted font-light leading-relaxed max-w-sm">
-                  Thank you for connecting with Golden Yellow Boutique. A brand curator will reach out to you shortly via phone or email to assist with your request.
-                </p>
-                <button
-                  onClick={() => setSubmitted(false)}
-                  className="btn-burgundy mt-4"
-                >
-                  Send Another Message
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-6 font-sans">
-                <div className="flex flex-col gap-2">
-                  <span className="text-[10px] uppercase tracking-widest text-gold-vintage font-bold flex items-center gap-1">
-                    <Video size={12} className="text-gold-accent" /> Online Showroom Consultation
-                  </span>
-                  <h2 className="font-serif text-2xl sm:text-3xl text-charcoal-800 tracking-wide font-light">
-                    Heritage Inquiry Form
-                  </h2>
-                  <p className="text-[11px] text-muted font-light leading-relaxed">
-                    Looking for a specific weave? Fill out this inquiry form, and our stylists will host a high-definition video tour to showcase sarees in real-time.
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  {/* Name */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] uppercase tracking-widest font-semibold text-charcoal-700">Full Name *</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      className="bg-white border border-gold-200 focus:outline-none focus:border-gold-accent px-4 py-2.5 text-xs rounded-sm"
-                      required
-                    />
-                  </div>
-
-                  {/* Email */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] uppercase tracking-widest font-semibold text-charcoal-700">Email Address *</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className="bg-white border border-gold-200 focus:outline-none focus:border-gold-accent px-4 py-2.5 text-xs rounded-sm"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                  {/* Phone */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] uppercase tracking-widest font-semibold text-charcoal-700">Phone Number *</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleChange}
-                      placeholder="+91 XXXXX XXXXX"
-                      className="bg-white border border-gold-200 focus:outline-none focus:border-gold-accent px-4 py-2.5 text-xs rounded-sm"
-                      required
-                    />
-                  </div>
-
-                  {/* Preferred collection */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] uppercase tracking-widest font-semibold text-charcoal-700">Preferred Collection</label>
-                    <select
-                      name="preferredCollection"
-                      value={formData.preferredCollection}
-                      onChange={handleChange}
-                      className="bg-white border border-gold-200 focus:outline-none focus:border-gold-accent px-4 py-2.5 text-xs rounded-sm"
-                    >
-                      <option value="">Select Category</option>
-                      <option value="kanchipuram">Kanchipuram Silk</option>
-                      <option value="banarasi">Banarasi Silk</option>
-                      <option value="cotton">Cotton Weaves</option>
-                      <option value="linen">Linen</option>
-                      <option value="organza">Organza / Tissue</option>
-                      <option value="bridal">Bridal / Wedding</option>
-                    </select>
-                  </div>
-                </div>
-
-                {/* Inquiry type */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] uppercase tracking-widest font-semibold text-charcoal-700">Inquiry Type</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
-                    <label className="flex items-center gap-2 bg-white border border-gold-200 p-3 rounded-sm cursor-pointer hover:bg-cream-100/50 transition-colors">
-                      <input
-                        type="radio"
-                        name="inquiryType"
-                        value="general"
-                        checked={formData.inquiryType === 'general'}
-                        onChange={handleChange}
-                        className="accent-burgundy-850"
-                      />
-                      <span>General Query</span>
-                    </label>
-                    <label className="flex items-center gap-2 bg-white border border-gold-200 p-3 rounded-sm cursor-pointer hover:bg-cream-100/50 transition-colors">
-                      <input
-                        type="radio"
-                        name="inquiryType"
-                        value="video-call"
-                        checked={formData.inquiryType === 'video-call'}
-                        onChange={handleChange}
-                        className="accent-burgundy-850"
-                      />
-                      <span>Video Shopping</span>
-                    </label>
-                    <label className="flex items-center gap-2 bg-white border border-gold-200 p-3 rounded-sm cursor-pointer hover:bg-cream-100/50 transition-colors col-span-2 sm:col-span-1">
-                      <input
-                        type="radio"
-                        name="inquiryType"
-                        value="custom-order"
-                        checked={formData.inquiryType === 'custom-order'}
-                        onChange={handleChange}
-                        className="accent-burgundy-850"
-                      />
-                      <span>Bespoke Blouse</span>
-                    </label>
-                  </div>
-                </div>
-
-                {/* Message */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] uppercase tracking-widest font-semibold text-charcoal-700">Detailed Message *</label>
-                  <textarea
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
-                    rows={5}
-                    placeholder="Describe specific weaves, patterns, or colors you are looking for..."
-                    className="bg-white border border-gold-200 focus:outline-none focus:border-gold-accent px-4 py-2.5 text-xs rounded-sm resize-none"
-                    required
-                  />
-                </div>
-
-                {/* Submit button */}
-                <button
-                  type="submit"
-                  className="btn-burgundy py-4 text-xs tracking-widest font-semibold flex items-center justify-center gap-2 mt-2"
-                >
-                  <Send size={12} /> Submit Inquiry
-                </button>
-              </form>
-            )}
-          </div>
+          <p className="text-xs sm:text-sm text-[var(--text-muted)] font-light max-w-lg leading-relaxed mt-2">
+            Schedule a high-definition video shopping tour or speak directly with our heritage silk weavers via WhatsApp.
+          </p>
         </div>
       </section>
 
+      {/* 2. CENTERED CONTACT CONTENT CARD */}
+      <section className="container-main pt-20 pb-12 flex justify-center items-center">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-2xl bg-[var(--bg-card)] border border-[var(--border-glow-intense)] p-8 sm:p-16 rounded-2xl shadow-[0_15px_60px_rgba(0,0,0,0.12)] relative overflow-hidden flex flex-col gap-8 text-center items-center"
+        >
+          {/* Subtle Grid overlay inside card */}
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:20px_20px] pointer-events-none" />
+          
+          {/* Glowing Ambient light in the center background */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gold-accent/5 rounded-full blur-[110px] pointer-events-none" />
+          
+          {/* Weavers Online Radar Status Indicator */}
+          <div className="z-10 flex items-center gap-2 bg-[#25D366]/10 border border-[#25D366]/20 px-4 py-1.5 rounded-full">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#25D366] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#25D366]"></span>
+            </span>
+            <span className="text-[9px] uppercase tracking-wider text-[#25D366] font-bold">
+              Weavers Online Now
+            </span>
+          </div>
+
+          <div className="relative z-10 flex flex-col gap-6 max-w-lg items-center">
+            
+            {/* Header badges */}
+            <span className="text-[9px] uppercase tracking-[0.25em] text-gold-accent font-extrabold px-3 py-1.5 rounded-full bg-[var(--bg-card-inner)] border border-[var(--border-glow)] w-fit flex items-center gap-1.5">
+              <Sparkles size={8} className="animate-pulse" /> Live Video Consultation
+            </span>
+            
+            <h2 className="font-serif text-4xl sm:text-5xl text-[var(--text-main)] font-light tracking-wide leading-tight">
+              Connect Directly on WhatsApp
+            </h2>
+            
+            <p className="text-xs sm:text-sm text-[var(--text-sub)] font-light leading-relaxed mb-4 max-w-md">
+              Skip standard forms. Initiate a chat directly with our heritage curators in Kanchipuram to request high-res catalog photos, live weaving videos, or customize wedding saree orders.
+            </p>
+
+            {/* Glowing Action Button */}
+            <motion.a
+              href="https://wa.me/919876543210"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-3.5 bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white px-12 py-5 lg:px-16 lg:py-6 text-xs lg:text-sm tracking-[0.2em] font-extrabold uppercase rounded-full shadow-[0_12px_35px_rgba(37,211,102,0.35)] hover:shadow-[0_20px_50px_rgba(37,211,102,0.55)] transition-all duration-300 relative overflow-hidden group"
+              whileHover={{ 
+                y: -5,
+                scale: 1.03
+              }}
+              whileTap={{ scale: 0.98 }}
+            >
+              {/* Button sheen sweep animation overlay */}
+              <span className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out" />
+              
+              <motion.div
+                animate={{ rotate: [0, -10, 10, -10, 0] }}
+                transition={{ repeat: Infinity, duration: 2, ease: "easeInOut", repeatDelay: 1 }}
+              >
+                <MessageSquare size={18} className="fill-white" />
+              </motion.div>
+              <span>Connect on WhatsApp</span>
+            </motion.a>
+
+            {/* Sub-details & Certifications */}
+            <div className="grid grid-cols-2 gap-4 mt-8 w-full border-t border-[var(--border-glow)] pt-8">
+              <div className="flex flex-col items-center gap-1">
+                <Compass size={18} className="text-gold-accent" />
+                <span className="text-[9px] uppercase tracking-wider text-[var(--text-main)] font-bold mt-1">Video Tours</span>
+                <span className="text-[8px] text-[var(--text-muted)]">Live showroom checks</span>
+              </div>
+              <div className="flex flex-col items-center gap-1">
+                <ShieldCheck size={18} className="text-gold-accent" />
+                <span className="text-[9px] uppercase tracking-wider text-[var(--text-main)] font-bold mt-1">Silk Mark Checked</span>
+                <span className="text-[8px] text-[var(--text-muted)]">100% certified fabrics</span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 justify-center mt-6 text-[9px] uppercase tracking-wider text-gold-accent font-semibold border border-[var(--border-glow)] px-5 py-2.5 bg-[var(--bg-card-inner)] rounded-sm">
+              <Award size={12} className="text-gold-accent animate-pulse" /> Weavers circle responds under 1 hour
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+      <Footer />
     </div>
   );
 }

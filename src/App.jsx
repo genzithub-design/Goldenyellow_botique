@@ -72,7 +72,7 @@ export default function App() {
         )}
       </AnimatePresence>
 
-      <div className="min-h-screen flex flex-col justify-between bg-gradient-to-b from-[#fbf8f3] via-[#f5efe4] to-[#fcfaf5] font-sans text-charcoal-800 grain-bg relative overflow-x-hidden">
+      <div className="min-h-screen bg-[var(--bg-primary)] font-sans text-[var(--text-main)] grain-bg relative overflow-x-hidden transition-colors duration-500">
         
         {/* Ambient background glows for all pages */}
         <div className="absolute top-[5vh] left-[-20vw] w-[60vw] h-[60vw] bg-gold-accent/4 rounded-full blur-[130px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '9s' }} />
@@ -84,7 +84,7 @@ export default function App() {
         <Navbar />
 
         {/* Main Content Area */}
-        <main className="flex-grow pt-[68px] sm:pt-[76px] relative z-10">
+        <main className="min-h-screen pt-[68px] sm:pt-[76px] relative z-10">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/collections" element={<Collections />} />
@@ -96,11 +96,7 @@ export default function App() {
             <Route path="*" element={<Home />} />
           </Routes>
         </main>
-
-        {/* Footer */}
-        <Footer />
       </div>
     </Router>
   );
 }
-

@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronRight, ShieldCheck, Heart, Share2, CornerDownRight, Sparkles } from 'lucide-react';
 import { allSareesList, sareeDataMap } from '../data';
-import { WhatsAppInquiry, SareeCard } from '../components';
+import { WhatsAppInquiry, SareeCard, Footer } from '../components';
 
 export default function SareeDetailPage() {
   const { id } = useParams();
@@ -63,11 +63,11 @@ export default function SareeDetailPage() {
   }
 
   return (
-    <div className="bg-cream-100 min-h-screen pb-24">
+    <div className="bg-[#0E0C10] min-h-screen pb-24">
       
       {/* 1. BREADCRUMBS */}
-      <div className="bg-cream-50 py-3.5 border-b border-gold-200/20">
-        <div className="container-main flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-muted font-semibold">
+      <div className="bg-[#120F15] py-3.5 border-b border-white/5">
+        <div className="container-main flex items-center gap-1.5 text-[9px] uppercase tracking-[0.2em] text-white/40 font-semibold">
           <Link to="/" className="hover:text-gold-accent transition-colors duration-300">Home</Link>
           <ChevronRight size={10} />
           {categorySlug && (
@@ -78,7 +78,7 @@ export default function SareeDetailPage() {
               <ChevronRight size={10} />
             </>
           )}
-          <span className="text-charcoal-800 font-bold">{saree.name}</span>
+          <span className="text-white/80 font-bold">{saree.name}</span>
         </div>
       </div>
 
@@ -87,14 +87,14 @@ export default function SareeDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           
           {/* LEFT: IMAGE VIEWER WITH ZOOM */}
-          <div className="lg:col-span-6 flex flex-col gap-4">
+          <div className="lg:col-span-6 flex flex-col gap-6">
             
             {/* Main Interactive Zoom Box */}
             <div
               ref={containerRef}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
-              className="relative aspect-[3/4] bg-cream-50 border border-gold-200 rounded-sm overflow-hidden cursor-crosshair shadow-lg"
+              className="relative aspect-[3/4] bg-[#120F15] border border-white/5 rounded-lg overflow-hidden cursor-crosshair shadow-2xl"
             >
               {/* Actual Image */}
               <img
@@ -106,23 +106,23 @@ export default function SareeDetailPage() {
 
               {/* Hover indicator cue */}
               {zoomStyle.display === 'none' && (
-                <div className="absolute bottom-4 right-4 bg-charcoal-900/60 backdrop-blur-sm text-cream-50 text-[10px] uppercase tracking-widest px-3 py-1.5 rounded-sm flex items-center gap-1 font-sans pointer-events-none">
-                  <Sparkles size={10} className="text-gold-accent animate-pulse" />
+                <div className="absolute bottom-4 right-4 bg-[#0F0D11]/90 backdrop-blur-md border border-white/10 text-white text-[9px] uppercase tracking-widest px-3 py-1.5 rounded-full flex items-center gap-1 font-sans pointer-events-none">
+                  <Sparkles size={8} className="text-gold-accent animate-pulse" />
                   Hover to Magnify Weave
                 </div>
               )}
             </div>
             
             {/* Authenticity Certificate Box */}
-            <div className="flex items-center gap-4 bg-cream-50 border border-gold-200/50 p-4 rounded-sm">
-              <div className="w-10 h-10 rounded-full bg-gold-light/20 flex items-center justify-center text-gold-vintage border border-gold-300/40">
-                <ShieldCheck size={20} />
+            <div className="flex items-center gap-4 bg-[#120F15] border border-white/5 p-5 rounded-lg">
+              <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gold-accent border border-white/10 shrink-0">
+                <ShieldCheck size={18} />
               </div>
               <div>
-                <h4 className="text-[11px] uppercase tracking-wider font-bold text-burgundy-900">
+                <h4 className="text-[10px] uppercase tracking-wider font-extrabold text-gold-accent">
                   Certified Heritage Handloom
                 </h4>
-                <p className="text-[10px] text-muted font-light leading-relaxed">
+                <p className="text-[10px] text-white/40 font-light leading-relaxed mt-1">
                   Accompanying Silk Mark label ensures authentic mulberry silk threads and real gold-plated metallic border zari threads.
                 </p>
               </div>
@@ -130,23 +130,23 @@ export default function SareeDetailPage() {
           </div>
 
           {/* RIGHT: TEXT DETAILS & WHATSAPP CTA */}
-          <div className="lg:col-span-6 flex flex-col gap-6 lg:sticky lg:top-28">
+          <div className="lg:col-span-6 flex flex-col gap-8 lg:sticky lg:top-28">
             
             {/* Header info */}
             <div>
-              <span className="text-[10px] uppercase tracking-widest text-gold-vintage font-bold bg-gold-light/20 border border-gold-300/30 px-3 py-1.5 rounded-sm inline-block mb-3">
+              <span className="text-[8px] uppercase tracking-[0.25em] text-gold-accent font-extrabold px-3 py-1.5 rounded-full bg-white/5 border border-white/10 inline-block mb-4">
                 {saree.material}
               </span>
               
-              <h1 className="font-serif text-3xl sm:text-5xl text-charcoal-800 font-light tracking-wide leading-tight">
+              <h1 className="font-serif text-3xl sm:text-5xl text-white font-light tracking-wide leading-tight">
                 {saree.name}
               </h1>
               
-              <div className="flex items-center justify-between mt-3 pb-4 border-b border-gold-200/30">
-                <span className="text-2xl font-serif text-burgundy-850 font-semibold tracking-wide">
+              <div className="flex items-center justify-between mt-4 pb-4 border-b border-white/5">
+                <span className="text-2xl font-serif text-gold-accent font-light tracking-wide">
                   {saree.price}
                 </span>
-                <span className="text-[10px] uppercase tracking-wider text-muted font-bold">
+                <span className="text-[9px] uppercase tracking-wider text-white/30 font-bold">
                   SKU: {saree.id}
                 </span>
               </div>
@@ -154,65 +154,65 @@ export default function SareeDetailPage() {
 
             {/* Description */}
             <div className="flex flex-col gap-2">
-              <h4 className="text-[11px] uppercase tracking-widest font-bold text-charcoal-750">
+              <h4 className="text-[10px] uppercase tracking-[0.25em] font-extrabold text-gold-accent">
                 Drape Story & Weave Details
               </h4>
-              <p className="text-xs sm:text-sm text-muted font-light leading-relaxed">
+              <p className="text-xs sm:text-sm text-white/55 font-light leading-relaxed">
                 {saree.description}
               </p>
             </div>
 
             {/* Spec Table */}
-            <div className="bg-cream-50 border border-gold-200/40 rounded-sm overflow-hidden shadow-sm">
-              <div className="px-5 py-3.5 border-b border-gold-200/20 bg-cream-100/50">
-                <h4 className="text-[10px] uppercase tracking-widest font-bold text-burgundy-900">
+            <div className="bg-[#120F15] border border-white/5 rounded-lg overflow-hidden shadow-2xl">
+              <div className="px-5 py-3.5 border-b border-white/5 bg-[#16121A]">
+                <h4 className="text-[9px] uppercase tracking-[0.25em] font-extrabold text-gold-accent">
                   Specifications
                 </h4>
               </div>
-              <div className="divide-y divide-gold-200/20 font-sans text-xs">
-                <div className="grid grid-cols-2 px-5 py-2.5">
-                  <span className="text-muted font-light">Material / Fabric</span>
-                  <span className="text-charcoal-800 font-medium">{saree.material}</span>
+              <div className="divide-y divide-white/5 font-sans text-xs">
+                <div className="grid grid-cols-2 px-5 py-3">
+                  <span className="text-white/40 font-light">Material / Fabric</span>
+                  <span className="text-white font-medium">{saree.material}</span>
                 </div>
-                <div className="grid grid-cols-2 px-5 py-2.5">
-                  <span className="text-muted font-light">Color Palette</span>
-                  <span className="text-charcoal-800 font-medium">{saree.color}</span>
+                <div className="grid grid-cols-2 px-5 py-3">
+                  <span className="text-white/40 font-light">Color Palette</span>
+                  <span className="text-white font-medium">{saree.color}</span>
                 </div>
                 {saree.zariType && (
-                  <div className="grid grid-cols-2 px-5 py-2.5">
-                    <span className="text-muted font-light">Zari Description</span>
-                    <span className="text-charcoal-800 font-medium">{saree.zariType}</span>
+                  <div className="grid grid-cols-2 px-5 py-3">
+                    <span className="text-white/40 font-light">Zari Description</span>
+                    <span className="text-white font-medium">{saree.zariType}</span>
                   </div>
                 )}
                 {saree.weavingTechnique && (
-                  <div className="grid grid-cols-2 px-5 py-2.5">
-                    <span className="text-muted font-light">Weaving Style</span>
-                    <span className="text-charcoal-800 font-medium">{saree.weavingTechnique}</span>
+                  <div className="grid grid-cols-2 px-5 py-3">
+                    <span className="text-white/40 font-light">Weaving Style</span>
+                    <span className="text-white font-medium">{saree.weavingTechnique}</span>
                   </div>
                 )}
                 {saree.borderSize && (
-                  <div className="grid grid-cols-2 px-5 py-2.5">
-                    <span className="text-muted font-light">Border Dimensions</span>
-                    <span className="text-charcoal-800 font-medium">{saree.borderSize}</span>
+                  <div className="grid grid-cols-2 px-5 py-3">
+                    <span className="text-white/40 font-light">Border Dimensions</span>
+                    <span className="text-white font-medium">{saree.borderSize}</span>
                   </div>
                 )}
-                <div className="grid grid-cols-2 px-5 py-2.5">
-                  <span className="text-muted font-light">Care Recommendation</span>
-                  <span className="text-charcoal-800 font-medium">{saree.careInstructions}</span>
+                <div className="grid grid-cols-2 px-5 py-3">
+                  <span className="text-white/40 font-light">Care Recommendation</span>
+                  <span className="text-white font-medium">{saree.careInstructions}</span>
                 </div>
-                <div className="grid grid-cols-2 px-5 py-2.5">
-                  <span className="text-muted font-light">Recommended Occasion</span>
-                  <span className="text-charcoal-800 font-medium">{saree.occasion}</span>
+                <div className="grid grid-cols-2 px-5 py-3">
+                  <span className="text-white/40 font-light">Recommended Occasion</span>
+                  <span className="text-white font-medium">{saree.occasion}</span>
                 </div>
               </div>
             </div>
 
             {/* Styling advice / note */}
-            <div className="flex flex-col gap-2 p-5 bg-gold-light/10 border border-gold-300/20 rounded-sm">
-              <h5 className="text-[10px] uppercase tracking-wider font-bold text-gold-vintage flex items-center gap-1.5">
+            <div className="flex flex-col gap-2 p-5 bg-[#17131D]/80 border border-white/5 rounded-lg">
+              <h5 className="text-[10px] uppercase tracking-wider font-extrabold text-gold-accent flex items-center gap-1.5">
                 <CornerDownRight size={12} /> Designer Styling Tip
               </h5>
-              <p className="text-[11px] text-muted font-light leading-relaxed">
+              <p className="text-[11px] text-white/50 font-light leading-relaxed">
                 Pair this {saree.color.toLowerCase()} drape with classic antique gold temple jewelry, a traditional silk brocade blouse, and clean jasmine blooms in your hair to capture authentic luxury heritage.
               </p>
             </div>
@@ -220,7 +220,7 @@ export default function SareeDetailPage() {
             {/* WhatsApp Inquiry CTA */}
             <div className="flex flex-col gap-3.5 mt-2">
               <WhatsAppInquiry saree={saree} className="w-full py-4 text-xs tracking-widest font-semibold" />
-              <p className="text-[10px] text-muted text-center leading-relaxed font-light">
+              <p className="text-[9px] text-white/35 text-center leading-relaxed font-light">
                 Our sales team replies within 1 hour to share full pricing, high-res videos, and arrange global shipping configurations.
               </p>
             </div>
@@ -230,15 +230,15 @@ export default function SareeDetailPage() {
 
       {/* 3. RELATED PRODUCTS */}
       {relatedSarees.length > 0 && (
-        <section className="container-main pt-24 mt-12 border-t border-gold-200/20">
+        <section className="container-main pt-24 mt-12 border-t border-white/5">
           <div className="text-center mb-16 flex flex-col items-center gap-2">
-            <span className="text-[10px] uppercase tracking-[0.25em] text-gold-vintage font-bold">
+            <span className="text-[10px] uppercase tracking-[0.25em] text-gold-accent font-bold">
               Complementary Weaves
             </span>
-            <h2 className="font-serif text-3xl sm:text-4xl text-charcoal-800 tracking-wide font-light">
+            <h2 className="font-serif text-3xl sm:text-4xl text-white tracking-wide font-light">
               You May Also Admire
             </h2>
-            <div className="w-12 h-[1px] bg-gold-vintage mt-1"></div>
+            <div className="w-12 h-[1px] bg-gold-accent mt-1"></div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -249,6 +249,7 @@ export default function SareeDetailPage() {
         </section>
       )}
 
+      <Footer />
     </div>
   );
 }

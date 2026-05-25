@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Award, ShieldCheck, Globe, Sparkles, ChevronLeft, ChevronRight, Play, Eye, Calendar } from 'lucide-react';
 import { collections, sareeDataMap, allSareesList } from '../data';
-import { SareeCard, Masonry, ImageTrail, Stack, SparkleBackground, ScrollStack, ScrollStackItem } from '../components';
+import { SareeCard, Masonry, ImageTrail, Stack, ScrollStack, ScrollStackItem, Footer } from '../components';
 
 const HERO_IMAGES = [
   "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=600&auto=format&fit=crop",
@@ -48,9 +48,17 @@ const ARTISAN_STEPS = [
 export default function Home() {
   const [trendingSarees, setTrendingSarees] = useState([]);
   const [activeArtisanStep, setActiveArtisanStep] = useState(0);
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
   const scrollRef = useRef(null);
   const { scrollYProgress } = useScroll();
   const progressWidth = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
+
+  // Track mobile breakpoint for scroll distance
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Load trending sarees
   useEffect(() => {
@@ -73,8 +81,7 @@ export default function Home() {
   return (
     <div className="bg-transparent flex flex-col min-h-screen relative font-sans grain-bg overflow-x-hidden" ref={scrollRef}>
       
-      {/* ── BACKGROUND AMBIENT GLOWS & SPARKLES ── */}
-      <SparkleBackground />
+
 
       {/* ── SCROLL PROGRESS GOLD LINE ── */}
       <motion.div
@@ -89,11 +96,11 @@ export default function Home() {
             
             {/* Left side text details */}
             <div className="lg:col-span-6 flex flex-col justify-center items-start gap-6 text-left">
-              <h1 className="font-sans text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1a1a1a] leading-tight max-w-2xl">
+              <h1 className="font-sans text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[var(--text-main)] leading-tight max-w-2xl">
                 Effortless Elegance for Your Everyday Look
               </h1>
               
-              <p className="font-sans text-sm sm:text-base text-[#4a4a4a] font-normal leading-relaxed max-w-xl">
+              <p className="font-sans text-sm sm:text-base text-[var(--text-sub)] font-normal leading-relaxed max-w-xl">
                 Discover the effortless charm of simple sarees made with soft, breathable fabrics that keep you comfortable throughout the day, while adding a graceful touch to your everyday look.
               </p>
 
@@ -246,7 +253,7 @@ export default function Home() {
       </section>
 
       {/* ── 3. INTERACTIVE SCROLL STACK COLLECTIONS ── */}
-      <section className="section-padding bg-transparent relative overflow-hidden">
+      <section className="pt-20 lg:pt-32 pb-0 bg-transparent relative overflow-hidden">
         <div className="container-main">
           
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-16 gap-4">
@@ -268,7 +275,7 @@ export default function Home() {
 
           <ScrollStack 
             useWindowScroll={true} 
-            itemDistance={280} 
+            itemDistance={150}
             itemScale={0.02}
             itemStackDistance={35}
             stackPosition="15%"
@@ -324,177 +331,449 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── INTERACTIVE WEAVER CANVAS (IMAGE TRAIL) ── */}
-      <section className="relative h-[65vh] bg-[#0E0B0A] overflow-hidden flex flex-col justify-center items-center text-center px-6 border-y border-gold-800/20">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(91,14,29,0.15)_0%,transparent_70%)] pointer-events-none z-0" />
-        
-        {/* Dynamic Image Trail background layer */}
-        <ImageTrail
-          items={[
-            'https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=600&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=600&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1605722243979-fe0be8158232?q=80&w=600&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1608748010899-18f300247112?q=80&w=600&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=600&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1631857455684-a54a2f03665f?q=80&w=600&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1618244972963-dbee1a7edc95?q=80&w=600&auto=format&fit=crop',
-            'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=600&auto=format&fit=crop',
-          ]}
-          variant={7}
-        />
 
-        {/* Foreground Content with viewport entrance */}
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-          className="relative z-20 max-w-2xl pointer-events-none flex flex-col items-center gap-4"
-        >
-          <Sparkles size={24} className="text-gold-accent animate-pulse" />
-          <span className="text-[10px] uppercase tracking-[0.3em] text-gold-accent font-bold">
-            Interactive Canvas
-          </span>
-          <h2 className="font-serif text-3xl sm:text-5xl text-cream-50 tracking-wide font-light leading-snug">
-            Weave Your Trail of Elegance
-          </h2>
-          <p className="text-xs sm:text-sm text-cream-300 font-light leading-relaxed max-w-md">
-            Move your cursor or drag your finger across the canvas to unveil a shifting, dynamic tapestry of our heritage handloom creations.
-          </p>
-          <div className="w-12 h-[1px] bg-gold-accent mt-2"></div>
-        </motion.div>
-      </section>
+      {/* ── BENTO GRID HERITAGE SHOWCASE ── */}
+      <section className="section-padding bg-[var(--bg-secondary)] relative overflow-hidden border-y border-[var(--border-glow-intense)]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_50%,rgba(91,14,29,0.18)_0%,transparent_60%)] pointer-events-none z-0" />
+        <div className="absolute top-0 right-0 w-1/2 h-full bg-[radial-gradient(circle_at_75%_30%,rgba(197,160,89,0.06)_0%,transparent_55%)] pointer-events-none z-0" />
 
-      {/* ── 4. ARTISAN PROCESS SECTION (INTERACTIVE STAGES) ── */}
-      <section className="section-padding bg-transparent border-b border-gold-200/10 relative">
-        <div className="container-main">
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
+        <div className="container-main relative z-10">
+
+          {/* Header row */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="max-w-xl mx-auto text-center mb-16 flex flex-col items-center gap-2"
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4"
           >
-            <span className="text-[10px] uppercase tracking-[0.25em] text-gold-vintage font-bold">
-              Weaving Chronicles
-            </span>
-            <h2 className="font-serif text-3xl sm:text-5xl text-charcoal-800 tracking-wide font-light">
-              Crafting A Masterpiece
-            </h2>
-            <div className="w-12 h-[1.5px] bg-gold-vintage mt-2"></div>
-          </motion.div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* Left: Weaving Stage Details Selector */}
-            <div className="lg:col-span-5 flex flex-col gap-4">
-              {ARTISAN_STEPS.map((step, idx) => (
-                <button
-                  key={step.id}
-                  onClick={() => setActiveArtisanStep(idx)}
-                  className={`text-left p-6 border transition-all duration-500 rounded-sm flex flex-col gap-2 shadow-sm ${
-                    activeArtisanStep === idx
-                      ? 'bg-burgundy-800 border-gold-accent text-cream-50 shadow-xl translate-x-3'
-                      : 'bg-white border-gold-200/25 text-charcoal-850 hover:bg-cream-100/50 hover:border-gold-300 hover:translate-x-1'
-                  }`}
-                >
-                  <span className={`text-[10px] uppercase tracking-widest font-bold ${activeArtisanStep === idx ? 'text-gold-accent' : 'text-gold-vintage'}`}>
-                    Stage 0{idx + 1} — {step.subtitle}
-                  </span>
-                  <h3 className="font-serif text-lg sm:text-xl font-medium">{step.title}</h3>
-                </button>
-              ))}
-            </div>
-
-            {/* Right: Dynamic description with image crossfade & shadow */}
-            <motion.div 
-              layout
-              className="lg:col-span-7 bg-white/80 backdrop-blur-sm border border-gold-200/35 p-8 sm:p-12 rounded-sm shadow-2xl flex flex-col sm:flex-row gap-8 items-center h-auto sm:h-[400px]"
-            >
-              {/* Dynamic Image */}
-              <div className="w-full sm:w-1/2 aspect-square sm:h-full overflow-hidden bg-cream-100 border border-gold-200/30 rounded-sm">
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={activeArtisanStep}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    src={ARTISAN_STEPS[activeArtisanStep].image}
-                    alt={ARTISAN_STEPS[activeArtisanStep].title}
-                    className="w-full h-full object-cover object-center"
-                  />
-                </AnimatePresence>
-              </div>
-
-              {/* Dynamic details description */}
-              <div className="flex-1 flex flex-col gap-3 justify-center">
-                <span className="text-[10px] uppercase tracking-widest text-gold-vintage font-bold">
-                  Details
-                </span>
-                <h4 className="font-serif text-xl sm:text-2xl text-charcoal-850 font-medium leading-snug">
-                  {ARTISAN_STEPS[activeArtisanStep].title}
-                </h4>
-                <p className="text-xs text-muted leading-relaxed font-light">
-                  {ARTISAN_STEPS[activeArtisanStep].desc}
-                </p>
-              </div>
-            </motion.div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ── 5. TRENDING SAREES GRID ── */}
-      <section className="section-padding bg-transparent">
-        <div className="container-main">
-          
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-16 gap-4">
-            <div className="flex flex-col gap-2">
-              <span className="text-[10px] uppercase tracking-[0.25em] text-gold-vintage font-bold">
-                Most Desired
+            <div>
+              <span className="text-[10px] uppercase tracking-[0.3em] text-gold-accent font-bold block mb-2">
+                Heritage Showcase
               </span>
-              <h2 className="font-serif text-3xl sm:text-5xl text-charcoal-800 tracking-wide font-light">
-                Trending Masterpieces
+              <h2 className="font-serif text-3xl sm:text-5xl text-[var(--text-main)] tracking-wide font-light">
+                Woven in Gold &amp; Silk
               </h2>
             </div>
             <Link
               to="/collections"
-              className="text-xs uppercase tracking-widest font-bold text-burgundy-850 hover:text-gold-accent transition-colors duration-300 flex items-center gap-1.5 shrink-0"
+              className="text-xs uppercase tracking-widest font-bold text-gold-accent hover:text-[var(--text-main)] transition-colors duration-300 flex items-center gap-1.5 shrink-0"
             >
-              Browse Full Catalog <ArrowRight size={14} />
+              View All Collections <ArrowRight size={14} />
             </Link>
+          </motion.div>
+
+          {/* Bento Grid — 4 cols desktop, 2 cols mobile */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 auto-rows-[190px] md:auto-rows-[220px]">
+
+            {/* A — Tall card (row-span-2 on desktop) */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ duration: 0.55, delay: 0.05 }}
+              className="col-span-1 md:row-span-2 relative group overflow-hidden cursor-pointer"
+            >
+              <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?q=80&w=600&auto=format&fit=crop" alt="Kanchipuram Silk"
+                className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm border border-gold-accent/40 px-2.5 py-1">
+                <span className="text-[8px] uppercase tracking-widest text-gold-accent font-bold">01</span>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                <span className="text-[8px] uppercase tracking-widest text-gold-accent font-bold">Kanchipuram</span>
+                <p className="font-serif text-white text-base mt-0.5 leading-tight">Pure Silk Heritage</p>
+              </div>
+            </motion.div>
+
+            {/* B — Wide top-center (col-span-2 on desktop) */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ duration: 0.55, delay: 0.1 }}
+              className="col-span-1 md:col-span-2 relative group overflow-hidden cursor-pointer"
+            >
+              <img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=900&auto=format&fit=crop" alt="Banarasi Silk"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm border border-gold-accent/40 px-2.5 py-1">
+                <span className="text-[8px] uppercase tracking-widest text-gold-accent font-bold">02</span>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                <span className="text-[8px] uppercase tracking-widest text-gold-accent font-bold">Banarasi</span>
+                <p className="font-serif text-white text-base mt-0.5 leading-tight">Zari Brocade Majesty</p>
+              </div>
+            </motion.div>
+
+            {/* C — Top-right small */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ duration: 0.55, delay: 0.15 }}
+              className="col-span-1 relative group overflow-hidden cursor-pointer"
+            >
+              <img src="https://images.unsplash.com/photo-1605722243979-fe0be8158232?q=80&w=600&auto=format&fit=crop" alt="Cotton Weave"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm border border-gold-accent/40 px-2.5 py-1">
+                <span className="text-[8px] uppercase tracking-widest text-gold-accent font-bold">03</span>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                <span className="text-[8px] uppercase tracking-widest text-gold-accent font-bold">Cotton</span>
+                <p className="font-serif text-white text-sm mt-0.5">Artisan Weave</p>
+              </div>
+            </motion.div>
+
+            {/* D — Text CTA card (col-span-2 on desktop) */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.97 }} whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}
+              className="col-span-1 md:col-span-2 bg-gradient-to-br from-[var(--bg-card)] to-[var(--bg-card-inner)] border border-[var(--border-glow-intense)] flex flex-col justify-center items-center p-6 text-center relative overflow-hidden group cursor-pointer hover:border-gold-accent/40 transition-all duration-500"
+            >
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(197,160,89,0.09)_0%,transparent_70%)] pointer-events-none group-hover:opacity-[1.5] transition-opacity duration-700" />
+              {/* corner accents */}
+              <div className="absolute top-0 left-0 w-8 h-8 border-t border-l border-gold-accent/40" />
+              <div className="absolute top-0 right-0 w-8 h-8 border-t border-r border-gold-accent/40" />
+              <div className="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-gold-accent/40" />
+              <div className="absolute bottom-0 right-0 w-8 h-8 border-b border-r border-gold-accent/40" />
+              <Sparkles size={18} className="text-gold-accent mb-3 animate-pulse" />
+              <span className="text-[9px] uppercase tracking-[0.32em] text-gold-accent font-bold mb-2">
+                Heritage Canvas
+              </span>
+              <p className="font-serif text-[var(--text-main)] text-base sm:text-lg leading-snug mb-5">
+                Every thread tells a story<br />of artisan legacy
+              </p>
+              <Link to="/collections" className="btn-gold py-2 px-5 text-[9px] tracking-widest uppercase font-bold flex items-center gap-1.5">
+                Explore All <ArrowRight size={11} />
+              </Link>
+            </motion.div>
+
+            {/* E — Mid-right small */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ duration: 0.55, delay: 0.25 }}
+              className="col-span-1 relative group overflow-hidden cursor-pointer"
+            >
+              <img src="https://images.unsplash.com/photo-1608748010899-18f300247112?q=80&w=600&auto=format&fit=crop" alt="Organza Saree"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm border border-gold-accent/40 px-2.5 py-1">
+                <span className="text-[8px] uppercase tracking-widest text-gold-accent font-bold">04</span>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                <span className="text-[8px] uppercase tracking-widest text-gold-accent font-bold">Organza</span>
+                <p className="font-serif text-white text-sm mt-0.5">Sheer Elegance</p>
+              </div>
+            </motion.div>
+
+            {/* F — Bottom-left small */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ duration: 0.55, delay: 0.3 }}
+              className="col-span-1 relative group overflow-hidden cursor-pointer"
+            >
+              <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=600&auto=format&fit=crop" alt="Traditional Weave"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm border border-gold-accent/40 px-2.5 py-1">
+                <span className="text-[8px] uppercase tracking-widest text-gold-accent font-bold">05</span>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                <span className="text-[8px] uppercase tracking-widest text-gold-accent font-bold">Traditional</span>
+                <p className="font-serif text-white text-sm mt-0.5">Classic Drape</p>
+              </div>
+            </motion.div>
+
+            {/* G — Bottom-center wide (col-span-2 on desktop) */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ duration: 0.55, delay: 0.35 }}
+              className="col-span-1 md:col-span-2 relative group overflow-hidden cursor-pointer"
+            >
+              <img src="https://images.unsplash.com/photo-1631857455684-a54a2f03665f?q=80&w=900&auto=format&fit=crop" alt="Bridal Collection"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm border border-gold-accent/40 px-2.5 py-1">
+                <span className="text-[8px] uppercase tracking-widest text-gold-accent font-bold">06</span>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                <span className="text-[8px] uppercase tracking-widest text-gold-accent font-bold">Bridal</span>
+                <p className="font-serif text-white text-base mt-0.5 leading-tight">Royal Bridal Ensemble</p>
+              </div>
+            </motion.div>
+
+            {/* H — Bottom-right small */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }} transition={{ duration: 0.55, delay: 0.4 }}
+              className="col-span-1 relative group overflow-hidden cursor-pointer"
+            >
+              <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=600&auto=format&fit=crop" alt="Designer Collection"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm border border-gold-accent/40 px-2.5 py-1">
+                <span className="text-[8px] uppercase tracking-widest text-gold-accent font-bold">07</span>
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-3 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-500">
+                <span className="text-[8px] uppercase tracking-widest text-gold-accent font-bold">Designer</span>
+                <p className="font-serif text-white text-sm mt-0.5">Contemporary Art</p>
+              </div>
+            </motion.div>
+
+          </div>
+        </div>
+      </section>
+
+
+      {/* ── 4. ARTISAN PROCESS — GEN-Z REDESIGN ── */}
+      <section className="relative bg-[var(--bg-primary)] overflow-hidden border-y border-[var(--border-glow)]">
+
+        {/* Ghost number watermark */}
+        <div className="absolute inset-0 flex items-center justify-end pr-8 pointer-events-none select-none overflow-hidden">
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={activeArtisanStep}
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -40 }}
+              transition={{ duration: 0.4 }}
+              className="text-[clamp(140px,22vw,280px)] font-black text-[var(--text-main)] opacity-[0.03] leading-none tracking-tighter select-none"
+              style={{ fontFamily: 'Montserrat, sans-serif' }}
+            >
+              0{activeArtisanStep + 1}
+            </motion.span>
+          </AnimatePresence>
+        </div>
+
+        {/* Ambient glow */}
+        <div className="absolute top-0 left-1/4 w-[500px] h-[300px] bg-gold-accent/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 right-1/4 w-[400px] h-[200px] bg-burgundy-800/10 rounded-full blur-[100px] pointer-events-none" />
+
+        <div className="container-main relative z-10 py-20 lg:py-28">
+
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="mb-10"
+          >
+            <span className="text-[10px] uppercase tracking-[0.35em] text-gold-accent font-bold block mb-3">
+              Weaving Chronicles
+            </span>
+            <h2 className="font-black text-4xl sm:text-6xl lg:text-7xl text-[var(--text-main)] tracking-tight leading-none uppercase" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+              The Art<br />
+              <span className="text-transparent" style={{ WebkitTextStroke: '1px rgba(197,160,89,0.6)' }}>of Making.</span>
+            </h2>
+          </motion.div>
+
+          {/* Horizontal pill tab nav */}
+          <div className="flex gap-2 overflow-x-auto pb-3 mb-10 scrollbar-none">
+            {ARTISAN_STEPS.map((step, idx) => (
+              <button
+                key={step.id}
+                onClick={() => setActiveArtisanStep(idx)}
+                className={`flex-shrink-0 flex items-center gap-2 px-4 py-2 rounded-full border text-[10px] uppercase tracking-widest font-bold transition-all duration-300 ${
+                  activeArtisanStep === idx
+                    ? 'bg-gold-accent border-gold-accent text-[#08060A]'
+                    : 'bg-[var(--bg-card)] border-[var(--border-glow)] text-[var(--text-muted)] hover:border-gold-accent/40 hover:text-[var(--text-main)]'
+                }`}
+              >
+                <span className={`w-4 h-4 rounded-full text-[8px] flex items-center justify-center font-black ${activeArtisanStep === idx ? 'bg-[#08060A] text-gold-accent' : 'bg-[var(--border-glow-intense)] text-[var(--text-muted)]'}`}>
+                  {idx + 1}
+                </span>
+                {step.subtitle}
+              </button>
+            ))}
           </div>
 
+          {/* Main content: Full-bleed image + overlay card */}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeArtisanStep}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              className="relative w-full h-[420px] sm:h-[520px] lg:h-[560px] rounded-2xl overflow-hidden"
+            >
+              {/* Full image */}
+              <img
+                src={ARTISAN_STEPS[activeArtisanStep].image}
+                alt={ARTISAN_STEPS[activeArtisanStep].title}
+                className="w-full h-full object-cover object-center scale-105"
+              />
+
+              {/* Dynamic gradient overlay matching theme background color */}
+              <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-primary)] via-[var(--bg-primary)]/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg-primary)]/60 via-transparent to-transparent" />
+
+              {/* Stage pill badge */}
+              <div className="absolute top-5 left-5 flex items-center gap-2 bg-[var(--glass-bg)] backdrop-blur-md border border-[var(--border-glow-intense)] rounded-full px-4 py-2">
+                <span className="w-5 h-5 rounded-full bg-gold-accent flex items-center justify-center text-[9px] font-black text-[#08060A]">{activeArtisanStep + 1}</span>
+                <span className="text-[9px] uppercase tracking-widest text-[var(--text-main)] font-bold">{ARTISAN_STEPS[activeArtisanStep].subtitle}</span>
+              </div>
+
+              {/* Bottom text overlay card */}
+              <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+                <div className="flex flex-col gap-2 max-w-lg">
+                  <h3 className="font-black text-2xl sm:text-4xl text-[var(--text-main)] leading-tight tracking-tight uppercase" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                    {ARTISAN_STEPS[activeArtisanStep].title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-[var(--text-sub)] font-light leading-relaxed">
+                    {ARTISAN_STEPS[activeArtisanStep].desc}
+                  </p>
+                </div>
+
+                {/* Step counter */}
+                <div className="flex-shrink-0 flex flex-col items-end gap-1">
+                  <span className="text-[9px] uppercase tracking-widest text-gold-accent font-bold">Step</span>
+                  <span className="font-black text-5xl sm:text-6xl text-[var(--text-main)] opacity-20 leading-none" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                    0{activeArtisanStep + 1}
+                  </span>
+                  <span className="text-[9px] text-[var(--text-muted)] uppercase tracking-widest">/ 0{ARTISAN_STEPS.length}</span>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Progress bar */}
+          <div className="mt-4 flex gap-1.5">
+            {ARTISAN_STEPS.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setActiveArtisanStep(idx)}
+                className={`h-[3px] rounded-full transition-all duration-500 ${
+                  activeArtisanStep === idx ? 'bg-gold-accent flex-[3]' : 'bg-[var(--border-glow-intense)] flex-1 hover:bg-gold-accent/40'
+                }`}
+              />
+            ))}
+          </div>
+
+        </div>
+      </section>
+
+
+      {/* ── 5. TRENDING SAREES — MODERN EDITORIAL GRID ── */}
+      <section className="section-padding bg-[var(--bg-secondary)] relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(197,160,89,0.07)_0%,transparent_55%)] pointer-events-none" />
+
+        <div className="container-main relative z-10">
+
+          {/* Header */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4"
+          >
+            <div>
+              <span className="text-[10px] uppercase tracking-[0.35em] text-gold-accent font-bold block mb-2">
+                Most Desired
+              </span>
+              <h2 className="font-black text-4xl sm:text-5xl lg:text-6xl text-[var(--text-main)] tracking-tight leading-none uppercase" style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                Trending<br />
+                <span className="text-transparent" style={{ WebkitTextStroke: '1px rgba(197,160,89,0.5)' }}>Now.</span>
+              </h2>
+            </div>
+            <Link
+              to="/collections"
+              className="flex items-center gap-2 text-[10px] uppercase tracking-widest font-bold text-gold-accent hover:text-[var(--text-main)] transition-colors duration-300 border border-gold-accent/30 hover:border-gold-accent px-5 py-2.5 rounded-full shrink-0"
+            >
+              Browse All <ArrowRight size={13} />
+            </Link>
+          </motion.div>
+
+          {/* Editorial Grid */}
           <motion.div
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, margin: '-50px' }}
-            variants={{
-              visible: { transition: { staggerChildren: 0.12 } }
-            }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+            variants={{ visible: { transition: { staggerChildren: 0.09 } } }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-3 auto-rows-[220px] md:auto-rows-[240px]"
           >
-            {trendingSarees.map((saree) => (
-              <motion.div 
-                key={saree.id}
-                variants={{
-                  hidden: { opacity: 0, y: 30 },
-                  visible: { opacity: 1, y: 0 }
-                }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <SareeCard saree={saree} />
-              </motion.div>
-            ))}
+            {trendingSarees.slice(0, 6).map((saree, idx) => {
+              // Layout: card 0 = tall (row-span-2), card 3 = wide (col-span-2)
+              const isTall = idx === 0;
+              const isWide = idx === 3;
+              return (
+                <motion.div
+                  key={saree.id}
+                  variants={{ hidden: { opacity: 0, y: 28 }, visible: { opacity: 1, y: 0 } }}
+                  transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+                  className={`relative group overflow-hidden cursor-pointer ${isTall ? 'row-span-2' : ''} ${isWide ? 'col-span-2' : 'col-span-1'}`}
+                >
+                  <Link to={`/saree/${saree.id}`} className="block w-full h-full">
+                    {/* Image */}
+                    <img
+                      src={saree.image}
+                      alt={saree.name}
+                      className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
+                      loading="lazy"
+                    />
+
+                    {/* Base dynamic vignette matching section background */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-secondary)]/85 via-[var(--bg-secondary)]/20 to-transparent" />
+
+                    {/* Hover overlay */}
+                    <div className="absolute inset-0 bg-[var(--bg-secondary)]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-400" />
+
+                    {/* Top-left badge */}
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-[var(--glass-bg)] backdrop-blur-sm border border-[var(--border-glow-intense)] rounded-full px-3 py-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-gold-accent" />
+                      <span className="text-[8px] uppercase tracking-widest text-[var(--text-main)] font-bold">{saree.material}</span>
+                    </div>
+
+                    {/* Price tag — top right */}
+                    <div className="absolute top-3 right-3 bg-gold-accent text-[#0D0B0F] text-[9px] font-black px-2.5 py-1 rounded-sm tracking-wider">
+                      {saree.price}
+                    </div>
+
+                    {/* Bottom content — slides up on hover */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 md:p-5 translate-y-1 group-hover:translate-y-0 transition-transform duration-400">
+                      <h3 className={`font-black text-[var(--text-main)] tracking-tight leading-tight uppercase ${isTall || isWide ? 'text-xl md:text-2xl' : 'text-base md:text-lg'}`} style={{ fontFamily: 'Montserrat, sans-serif' }}>
+                        {saree.name}
+                      </h3>
+                      <div className="flex items-center justify-between mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-75">
+                        <span className="text-[9px] uppercase tracking-widest text-gold-accent font-bold">{saree.color}</span>
+                        <span className="flex items-center gap-1 text-[9px] uppercase tracking-widest text-[var(--text-main)] font-bold">
+                          View <ArrowRight size={10} />
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Gold shimmer top border */}
+                    <div className="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-gold-accent via-gold-300 to-transparent transform -translate-x-full group-hover:translate-x-0 transition-transform duration-600" />
+                  </Link>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+
+          {/* Bottom CTA strip */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[var(--border-glow-intense)] pt-6"
+          >
+            <p className="text-xs text-[var(--text-muted)] uppercase tracking-widest font-bold">
+              Showing {Math.min(6, trendingSarees.length)} of {trendingSarees.length}+ masterpieces
+            </p>
+            <Link
+              to="/collections"
+              className="btn-gold py-2.5 px-6 text-[9px] tracking-widest uppercase font-bold flex items-center gap-1.5"
+            >
+              Explore Full Catalog <ArrowRight size={11} />
+            </Link>
           </motion.div>
 
         </div>
       </section>
 
+
       {/* ── 6. VIDEO CONSULTATION / APPOINTMENT CTA ── */}
-      <section className="py-24 relative bg-[#0E0B0A] overflow-hidden border-y border-gold-800/20">
-        <div className="absolute inset-0 bg-burgundy-950/15 z-10 pointer-events-none" />
+      <section className="py-24 relative bg-[var(--bg-primary)] overflow-hidden border-y border-[var(--border-glow-intense)]">
+        <div className="absolute inset-0 bg-[var(--burgundy)]/5 z-10 pointer-events-none" />
         <div className="container-main relative z-20 flex flex-col lg:flex-row gap-12 items-center justify-between">
           
           <motion.div 
@@ -502,7 +781,7 @@ export default function Home() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="max-w-xl text-cream-50 flex flex-col gap-4"
+            className="max-w-xl text-[var(--text-main)] flex flex-col gap-4"
           >
             <span className="text-[10px] uppercase tracking-[0.3em] text-gold-accent font-bold flex items-center gap-1.5">
               <Play size={12} className="text-gold-accent fill-gold-accent" /> Virtual Showroom Tour
@@ -510,7 +789,7 @@ export default function Home() {
             <h2 className="font-serif text-3xl sm:text-5xl tracking-wide font-light leading-snug">
               Examine the Craftsmanship, live from Kanchipuram
             </h2>
-            <p className="text-xs sm:text-sm text-cream-300 font-light leading-relaxed">
+            <p className="text-xs sm:text-sm text-[var(--text-sub)] font-light leading-relaxed">
               Can't visit our physical showrooms? Book a high-definition video shopping slot. Our heritage curators will host a live consultation, unfolding sarees, detailing zari layers, and showing colors in natural daylight.
             </p>
           </motion.div>
@@ -520,28 +799,28 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="bg-[#FCFAF6]/10 backdrop-blur-md border border-gold-600/30 p-8 sm:p-10 rounded-sm w-full lg:max-w-md flex flex-col gap-6 text-cream-50 shadow-2xl hover:border-gold-accent/50 transition-colors"
+            className="bg-[var(--bg-card)]/80 backdrop-blur-md border border-[var(--border-glow-intense)] p-8 sm:p-10 rounded-sm w-full lg:max-w-md flex flex-col gap-6 text-[var(--text-main)] shadow-2xl hover:border-gold-accent/50 transition-colors"
           >
-            <div className="flex gap-4 items-start border-b border-gold-800/30 pb-4">
+            <div className="flex gap-4 items-start border-b border-[var(--border-glow)] pb-4">
               <Calendar className="text-gold-accent shrink-0 mt-0.5 animate-pulse" size={24} />
               <div>
-                <h4 className="font-serif text-lg font-medium text-cream-100">Schedule Video Visit</h4>
-                <p className="text-[10px] text-cream-300">Free 30-minute private showroom slot</p>
+                <h4 className="font-serif text-lg font-medium text-[var(--text-main)]">Schedule Video Visit</h4>
+                <p className="text-[10px] text-[var(--text-muted)]">Free 30-minute private showroom slot</p>
               </div>
             </div>
 
             <div className="flex flex-col gap-3.5 text-xs">
               <div className="flex gap-2">
                 <span className="text-gold-accent font-bold">✔</span>
-                <span className="font-light text-cream-200">Examine fabrics under high-magnification cams</span>
+                <span className="font-light text-[var(--text-sub)]">Examine fabrics under high-magnification cams</span>
               </div>
               <div className="flex gap-2">
                 <span className="text-gold-accent font-bold">✔</span>
-                <span className="font-light text-cream-200">Get styling advice from professional bridal drapers</span>
+                <span className="font-light text-[var(--text-sub)]">Get styling advice from professional bridal drapers</span>
               </div>
               <div className="flex gap-2">
                 <span className="text-gold-accent font-bold">✔</span>
-                <span className="font-light text-cream-200">Personalized shipping packaging checks</span>
+                <span className="font-light text-[var(--text-sub)]">Personalized shipping packaging checks</span>
               </div>
             </div>
 
@@ -567,15 +846,15 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col items-center text-center p-8 bg-white/70 backdrop-blur-sm border border-gold-200/20 rounded-sm shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
+              className="flex flex-col items-center text-center p-8 bg-[var(--bg-card)]/75 backdrop-blur-sm border border-[var(--border-glow)] rounded-sm shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
             >
-              <div className="w-16 h-16 rounded-full border border-gold-300 flex items-center justify-center text-gold-vintage mb-6 bg-cream-50 shadow-inner">
+              <div className="w-16 h-16 rounded-full border border-gold-300 flex items-center justify-center text-gold-vintage mb-6 bg-[var(--bg-card-inner)] shadow-inner">
                 <Award size={28} />
               </div>
-              <h3 className="font-serif text-xl font-medium text-charcoal-800 mb-3">
+              <h3 className="font-serif text-xl font-medium text-[var(--text-main)] mb-3">
                 100% Pure Certified Silk
               </h3>
-              <p className="text-xs text-muted font-light leading-relaxed">
+              <p className="text-xs text-[var(--text-muted)] font-light leading-relaxed">
                 All our silk sarees bear the certified Silk Mark tag, guaranteeing authentic Mulberry silk yarns and gold-plated silver zari of the highest purity grades.
               </p>
             </motion.div>
@@ -586,15 +865,15 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col items-center text-center p-8 bg-white/70 backdrop-blur-sm border border-gold-200/20 rounded-sm shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
+              className="flex flex-col items-center text-center p-8 bg-[var(--bg-card)]/75 backdrop-blur-sm border border-[var(--border-glow)] rounded-sm shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
             >
-              <div className="w-16 h-16 rounded-full border border-gold-300 flex items-center justify-center text-gold-vintage mb-6 bg-cream-50 shadow-inner">
+              <div className="w-16 h-16 rounded-full border border-gold-300 flex items-center justify-center text-gold-vintage mb-6 bg-[var(--bg-card-inner)] shadow-inner">
                 <Sparkles size={26} />
               </div>
-              <h3 className="font-serif text-xl font-medium text-charcoal-800 mb-3">
+              <h3 className="font-serif text-xl font-medium text-[var(--text-main)] mb-3">
                 Traditional Craftsmanship
               </h3>
-              <p className="text-xs text-muted font-light leading-relaxed">
+              <p className="text-xs text-[var(--text-muted)] font-light leading-relaxed">
                 We work directly with master weavers, keeping ancient weaving guilds alive and ensuring fair wages are paid directly to handloom artists.
               </p>
             </motion.div>
@@ -605,15 +884,15 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="flex flex-col items-center text-center p-8 bg-white/70 backdrop-blur-sm border border-gold-200/20 rounded-sm shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
+              className="flex flex-col items-center text-center p-8 bg-[var(--bg-card)]/75 backdrop-blur-sm border border-[var(--border-glow)] rounded-sm shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
             >
-              <div className="w-16 h-16 rounded-full border border-gold-300 flex items-center justify-center text-gold-vintage mb-6 bg-cream-50 shadow-inner">
+              <div className="w-16 h-16 rounded-full border border-gold-300 flex items-center justify-center text-gold-vintage mb-6 bg-[var(--bg-card-inner)] shadow-inner">
                 <Globe size={26} />
               </div>
-              <h3 className="font-serif text-xl font-medium text-charcoal-800 mb-3">
+              <h3 className="font-serif text-xl font-medium text-[var(--text-main)] mb-3">
                 Worldwide Boutique Delivery
               </h3>
-              <p className="text-xs text-muted font-light leading-relaxed">
+              <p className="text-xs text-[var(--text-muted)] font-light leading-relaxed">
                 We ship our luxury sarees internationally. Our team offers online video boutique tours and consultation to customize blouse styles before dispatch.
               </p>
             </motion.div>
@@ -623,12 +902,12 @@ export default function Home() {
       </section>
 
       {/* ── 8. LUXURY CLIENT REVIEW (TESTIMONIALS) ── */}
-      <section className="section-padding bg-[#FCFAF6]/60 backdrop-blur-sm border-t border-gold-200/20">
+      <section className="section-padding bg-[var(--bg-card)]/60 backdrop-blur-sm border-t border-[var(--border-glow)]">
         <div className="container-main text-center">
-          <span className="text-[10px] uppercase tracking-[0.25em] text-gold-vintage font-bold mb-3 block">
+          <span className="text-[10px] uppercase tracking-[0.25em] text-gold font-bold mb-3 block">
             Customer Praise
           </span>
-          <h2 className="font-serif text-3xl sm:text-5xl text-charcoal-800 tracking-wide font-light mb-16">
+          <h2 className="font-serif text-3xl sm:text-5xl text-[var(--text-main)] tracking-wide font-light mb-16">
             Words of Appreciation
           </h2>
 
@@ -642,17 +921,18 @@ export default function Home() {
             {/* Elegant Quotation Marks Visual Accent */}
             <span className="absolute top-[-20px] left-0 font-serif text-[120px] text-gold-accent/15 leading-none pointer-events-none select-none">“</span>
             
-            <blockquote className="font-serif text-xl sm:text-3xl italic text-charcoal-700 leading-relaxed font-light mb-8">
+            <blockquote className="font-serif text-xl sm:text-3xl italic text-[var(--text-main)] leading-relaxed font-light mb-8">
               "The Muhurtham Kanchipuram saree I ordered from Golden Yellow Boutique was beyond words. The weight of the silk, the shimmer of the pure gold zari, and the detail in the wedding cart design on the pallu left everyone spellbound. It is a family treasure now."
             </blockquote>
             
-            <cite className="font-sans text-xs uppercase tracking-widest font-bold text-gold-vintage block">
+            <cite className="font-sans text-xs uppercase tracking-widest font-bold text-gold block">
               — Arundhati S., Bangalore
             </cite>
           </motion.div>
         </div>
       </section>
       
+      <Footer />
     </div>
   );
 }

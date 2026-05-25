@@ -51,6 +51,27 @@
   outline: none;
 }
 
+@media (min-width: 1024px) {
+  .gooey-nav-container {
+    padding: 5px;
+  }
+
+  .gooey-nav-container nav ul {
+    gap: 1.5rem;
+  }
+
+  .gooey-nav-container nav ul li a {
+    padding: 0.85rem 1.6rem;
+    font-size: 11px;
+    letter-spacing: 0.28em;
+  }
+
+  .gooey-nav-container .effect.text {
+    font-size: 11px;
+    letter-spacing: 0.28em;
+  }
+}
+
 .gooey-nav-container nav ul li a:hover {
   color: #5b0e1d;
 }
@@ -190,3 +211,35 @@
     opacity: 0;
   }
 }
+
+/* ── DARK MODE OVERRIDES FOR GOOEY NAV ── */
+[data-theme='dark'] .gooey-nav-container {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+[data-theme='dark'] .gooey-nav-container nav ul li a {
+  color: var(--text-sub);
+}
+
+[data-theme='dark'] .gooey-nav-container nav ul li a:hover {
+  color: var(--text-main);
+}
+
+[data-theme='dark'] .gooey-nav-container nav ul li.active a {
+  color: #08060A; /* Dark contrast text inside the active gold pill */
+}
+
+[data-theme='dark'] .gooey-nav-container .effect.text {
+  color: var(--text-sub);
+}
+
+[data-theme='dark'] .gooey-nav-container .effect.text.active {
+  color: #08060A;
+}
+
+[data-theme='dark'] .gooey-nav-container .effect.filter::after {
+  background: var(--gold-accent);
+  box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25);
+}
+

@@ -14,6 +14,33 @@
   --linen: #FFFDF9;
   --charcoal: #1F1A17;
   --muted: #70645C;
+
+  /* Theme variables (Default: Dark Mode) */
+  --bg-primary: #0E0C10;
+  --bg-secondary: #08060A;
+  --bg-card: #120F15;
+  --bg-card-inner: #16121A;
+  --text-main: #FAF7F2;
+  --text-muted: rgba(255, 255, 255, 0.4);
+  --text-sub: rgba(255, 255, 255, 0.55);
+  --border-glow: rgba(255, 255, 255, 0.05);
+  --border-glow-intense: rgba(255, 255, 255, 0.1);
+  --glass-bg: rgba(22, 18, 26, 0.8);
+  --nav-bg: transparent;
+}
+
+[data-theme='light'] {
+  --bg-primary: #dddcda;
+  --bg-secondary: #FFFDF9;
+  --bg-card: #FFFFFF;
+  --bg-card-inner: #F5EFE4;
+  --text-main: #1F1A17;
+  --text-muted: #70645C;
+  --text-sub: #554A42;
+  --border-glow: rgba(197, 160, 89, 0.2);
+  --border-glow-intense: rgba(197, 160, 89, 0.35);
+  --glass-bg: rgba(255, 253, 249, 0.8);
+  --nav-bg: transparent;
 }
 
 * {
@@ -29,10 +56,11 @@ html {
 
 body {
   font-family: 'Montserrat', system-ui, sans-serif;
-  color: var(--charcoal);
-  background: var(--cream);
+  color: var(--text-main);
+  background: var(--bg-primary);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 h1, h2, h3, h4, h5, h6, .font-serif {

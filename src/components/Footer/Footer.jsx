@@ -6,7 +6,7 @@ import { collections } from '../../data';
 
 export default function Footer() {
   return (
-    <footer className="bg-charcoal-900 text-cream-100 border-t border-gold-800/40 relative grain-bg">
+    <footer className="bg-charcoal-900 text-cream-100 border-t border-gold-800/40 relative z-30 grain-bg">
       {/* Decorative Golden Line */}
       <div className="h-1 w-full bg-gold-gradient"></div>
 

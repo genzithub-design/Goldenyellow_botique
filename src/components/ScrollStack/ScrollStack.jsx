@@ -106,7 +106,7 @@ const ScrollStack = ({
       const triggerStart = cardTop - stackPositionPx - itemStackDistance * i;
       const triggerEnd = cardTop - scaleEndPositionPx;
       const pinStart = cardTop - stackPositionPx - itemStackDistance * i;
-      const pinEnd = endElementTop - containerHeight;
+      const pinEnd = endElementTop - stackPositionPx;
 
       const scaleProgress = calculateProgress(scrollTop, triggerStart, triggerEnd);
       const targetScale = baseScale + i * itemScale;
@@ -201,7 +201,7 @@ const ScrollStack = ({
         duration: 1.2,
         easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
-        touchMultiplier: 2,
+        touchMultiplier: 1.0,
         infinite: false,
         wheelMultiplier: 1,
         lerp: 0.1,
@@ -229,7 +229,7 @@ const ScrollStack = ({
         duration: 1.2,
         easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         smoothWheel: true,
-        touchMultiplier: 2,
+        touchMultiplier: 1.0,
         infinite: false,
         gestureOrientationHandler: true,
         normalizeWheel: true,
