@@ -1,4 +1,4 @@
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = 'https://goldenyellow-botique-server-md5q5imne.vercel.app/api';
 const TOKEN_KEY = 'gy_admin_token';
 
 function getHeaders(extraHeaders = {}) {

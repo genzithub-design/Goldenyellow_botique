@@ -85,7 +85,7 @@ app.post('/api/admin/login', (req, res) => {
 // ── Image Upload ───────────────────────────────────────
 app.post('/api/upload', authenticateAdmin, upload.single('image'), (req, res) => {
   if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
-  const url = `http://localhost:${PORT}/uploads/${req.file.filename}`;
+  const url = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
   res.json({ url, filename: req.file.filename });
 });
 
