@@ -1,22 +1,40 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ChevronRight, BookOpen, ShieldCheck, Truck, RefreshCw } from 'lucide-react';
-import { collections, sareeDataMap } from '../data';
+import { ChevronRight, BookOpen, ShieldCheck, Truck, RefreshCw, Loader } from 'lucide-react';
+import { getCollections, getProducts } from '../api/admin';
 import { SareeCard, Footer } from '../components';
+import { optimizeUnsplashUrl } from '../utils/image';
 
 export default function CategoryPage() {
   const { category: categorySlug } = useParams();
   const [sortBy, setSortBy] = useState('featured');
 
+  const [collections, setCollections] = useState([]);
+  const [rawProducts, setRawProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadCategoryData() {
+      try {
+        const cols = await getCollections();
+        setCollections(cols);
+        if (categorySlug) {
+          const prods = await getProducts(categorySlug);
+          setRawProducts(prods);
+        }
+      } catch (err) {
+        console.error('Failed to load database category catalog:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadCategoryData();
+  }, [categorySlug]);
+
   // Find collection details
   const collectionMeta = useMemo(() => {
     return collections.find((col) => col.slug === categorySlug);
-  }, [categorySlug]);
-
-  // Find products list for this category
-  const rawProducts = useMemo(() => {
-    return sareeDataMap[categorySlug] || [];
-  }, [categorySlug]);
+  }, [collections, categorySlug]);
 
   // Helper: parse price string e.g. "₹45,500" -> 45500
   const parsePrice = (priceStr) => {
@@ -35,6 +53,15 @@ export default function CategoryPage() {
     }
     return products; // 'featured'
   }, [rawProducts, sortBy]);
+
+  if (loading) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center text-gold-accent gap-2">
+        <Loader className="animate-spin" size={28} />
+        <span className="text-[10px] uppercase tracking-widest font-bold">Synchronizing Showroom...</span>
+      </div>
+    );
+  }
 
   if (!collectionMeta) {
     return (
@@ -71,7 +98,7 @@ export default function CategoryPage() {
         {/* Ambient Dark Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-secondary)] via-[var(--bg-secondary)]/60 to-transparent z-10" />
         <img
-          src={collectionMeta.image}
+          src={optimizeUnsplashUrl(collectionMeta.image, 800)}
           alt={collectionMeta.title}
           className="w-full h-full object-cover object-center absolute inset-0 opacity-40 scale-102 hover:scale-105 transition-transform duration-[2s]"
         />

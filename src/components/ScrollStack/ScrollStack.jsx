@@ -195,7 +195,21 @@ const ScrollStack = ({
     updateCardTransforms();
   }, [updateCardTransforms]);
 
+  const isMobileDevice = useCallback(() => {
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth < 768 || ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  }, []);
+
   const setupLenis = useCallback(() => {
+    if (isMobileDevice()) {
+      // Use native scroll listener on mobile devices
+      const target = useWindowScroll ? window : scrollerRef.current;
+      if (target) {
+        target.addEventListener('scroll', handleScroll, { passive: true });
+      }
+      return null;
+    }
+
     if (useWindowScroll) {
       const lenis = new Lenis({
         duration: 1.2,
@@ -205,7 +219,7 @@ const ScrollStack = ({
         infinite: false,
         wheelMultiplier: 1,
         lerp: 0.1,
-        syncTouch: true,
+        syncTouch: false,
         syncTouchLerp: 0.075
       });
 
@@ -236,7 +250,7 @@ const ScrollStack = ({
         wheelMultiplier: 1,
         touchInertiaMultiplier: 35,
         lerp: 0.1,
-        syncTouch: true,
+        syncTouch: false,
         syncTouchLerp: 0.075,
         touchInertia: 0.6
       });
@@ -252,7 +266,7 @@ const ScrollStack = ({
       lenisRef.current = lenis;
       return lenis;
     }
-  }, [handleScroll, useWindowScroll]);
+  }, [handleScroll, useWindowScroll, isMobileDevice]);
 
   useLayoutEffect(() => {
     const scroller = scrollerRef.current;
@@ -309,6 +323,12 @@ const ScrollStack = ({
       }
       if (lenisRef.current) {
         lenisRef.current.destroy();
+        lenisRef.current = null;
+      } else {
+        const target = useWindowScroll ? window : scrollerRef.current;
+        if (target) {
+          target.removeEventListener('scroll', handleScroll);
+        }
       }
       stackCompletedRef.current = false;
       wrappersRef.current = [];

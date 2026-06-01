@@ -1,37 +1,49 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronRight, ShieldCheck, Heart, Share2, CornerDownRight, Sparkles } from 'lucide-react';
-import { allSareesList, sareeDataMap } from '../data';
+import { ChevronRight, ShieldCheck, Heart, Share2, CornerDownRight, Sparkles, Loader } from 'lucide-react';
+import { getAllProducts } from '../api/admin';
 import { WhatsAppInquiry, SareeCard, Footer } from '../components';
+import { optimizeUnsplashUrl } from '../utils/image';
 
 export default function SareeDetailPage() {
   const { id } = useParams();
   const [zoomStyle, setZoomStyle] = useState({ display: 'none', transform: 'scale(1)' });
   const containerRef = useRef(null);
 
+  const [allProducts, setAllProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadProductData() {
+      try {
+        const prods = await getAllProducts();
+        setAllProducts(prods);
+      } catch (err) {
+        console.error('Failed to load database catalog products:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadProductData();
+  }, []);
+
   // Find the current saree
   const saree = useMemo(() => {
-    return allSareesList.find((item) => item.id === id);
-  }, [id]);
+    return allProducts.find((item) => item.id === id);
+  }, [allProducts, id]);
 
   // Find related sarees (same material or collection, excluding current)
   const relatedSarees = useMemo(() => {
     if (!saree) return [];
-    return allSareesList
+    return allProducts
       .filter((item) => item.material === saree.material && item.id !== saree.id)
       .slice(0, 3);
-  }, [saree]);
+  }, [allProducts, saree]);
 
   // Find category slug for breadcrumbs
   const categorySlug = useMemo(() => {
-    if (!saree) return '';
-    for (const [slug, list] of Object.entries(sareeDataMap)) {
-      if (list.some((item) => item.id === saree.id)) {
-        return slug;
-      }
-    }
-    return '';
+    return saree ? saree.collectionSlug : '';
   }, [saree]);
 
   // Beautiful interactive zoom-magnifier on hover
@@ -49,6 +61,15 @@ export default function SareeDetailPage() {
   const handleMouseLeave = () => {
     setZoomStyle({ display: 'none', transform: 'scale(1)' });
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-[60vh] flex flex-col items-center justify-center text-gold-accent gap-2">
+        <Loader className="animate-spin" size={28} />
+        <span className="text-[10px] uppercase tracking-widest font-bold">Revealing Weave Craft...</span>
+      </div>
+    );
+  }
 
   if (!saree) {
     return (
@@ -98,7 +119,7 @@ export default function SareeDetailPage() {
             >
               {/* Actual Image */}
               <img
-                src={saree.image}
+                src={optimizeUnsplashUrl(saree.image, 1000)}
                 alt={saree.name}
                 className="w-full h-full object-cover object-top transition-transform duration-200"
                 style={zoomStyle.display === 'none' ? {} : { transform: zoomStyle.transform, transformOrigin: zoomStyle.transformOrigin }}

@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Award, ShieldCheck, Globe, Sparkles, ChevronLeft, ChevronRight, Play, Eye, Calendar } from 'lucide-react';
-import { collections, sareeDataMap, allSareesList } from '../data';
+import { getCollections, getAllProducts } from '../api/admin';
 import { SareeCard, Masonry, ImageTrail, Stack, ScrollStack, ScrollStackItem, Footer } from '../components';
+import { optimizeUnsplashUrl } from '../utils/image';
 
 const HERO_IMAGES = [
   "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=600&auto=format&fit=crop",
@@ -46,6 +47,7 @@ const ARTISAN_STEPS = [
 ];
 
 export default function Home() {
+  const [collections, setCollections] = useState([]);
   const [trendingSarees, setTrendingSarees] = useState([]);
   const [activeArtisanStep, setActiveArtisanStep] = useState(0);
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
@@ -60,21 +62,19 @@ export default function Home() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Load trending sarees
+  // Load home page data
   useEffect(() => {
-    const kanchiList = sareeDataMap['kanchipuram-silk'] || [];
-    const banarasiList = sareeDataMap['banarasi-silk'] || [];
-    const organzaList = sareeDataMap['organza-sarees'] || [];
-    const bridalList = sareeDataMap['bridal-sarees'] || [];
-    
-    setTrendingSarees([
-      kanchiList[0], // Swarnanjali Crimson
-      banarasiList[0], // Shahi Katan Maroon
-      organzaList[4], // Indu Golden Tissue
-      bridalList[0], // Vara Mahalakshmi Red
-      kanchiList[4], // Neelambari Royal Blue
-      banarasiList[4] // Gulmarg Peach Tanchoi
-    ].filter(Boolean));
+    async function loadData() {
+      try {
+        const cols = await getCollections();
+        const prods = await getAllProducts();
+        setCollections(cols);
+        setTrendingSarees(prods.slice(0, 6));
+      } catch (err) {
+        console.error('Failed to load database home catalog data:', err);
+      }
+    }
+    loadData();
   }, []);
 
 
@@ -164,7 +164,7 @@ export default function Home() {
               >
                 <div className="absolute inset-0 bg-burgundy-950/15 pointer-events-none" />
                 <img
-                  src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=800&auto=format&fit=crop"
+                  src={optimizeUnsplashUrl("https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b", 500)}
                   alt="Traditional Weaver hand"
                   className="w-full h-full object-cover"
                 />
@@ -181,7 +181,7 @@ export default function Home() {
                 <div className="w-full h-full overflow-hidden bg-cream-200 relative">
                   <div className="absolute inset-0 border border-gold-vintage/25 pointer-events-none z-10" />
                   <img
-                    src="https://images.unsplash.com/photo-1608748010899-18f300247112?q=80&w=800&auto=format&fit=crop"
+                    src={optimizeUnsplashUrl("https://images.unsplash.com/photo-1608748010899-18f300247112", 500)}
                     alt="Authentic silk drape styling"
                     className="w-full h-full object-cover object-top hover:scale-108 transition-transform duration-1000 ease-out"
                   />
@@ -217,13 +217,13 @@ export default function Home() {
                 </span>
               </div>
 
-              <h2 className="font-serif text-3xl sm:text-5xl text-charcoal-800 tracking-wide font-light leading-tight">
+              <h2 className="font-serif text-3xl sm:text-5xl text-white tracking-wide font-light leading-tight">
                 Authentic Weaves <br />Created for Longevity
               </h2>
 
               <div className="w-16 h-[2px] bg-gold-vintage rounded-full"></div>
 
-              <div className="flex flex-col gap-4 text-xs sm:text-sm text-muted font-light leading-relaxed">
+              <div className="flex flex-col gap-4 text-xs sm:text-sm text-white/80 font-light leading-relaxed">
                 <p>
                   At Golden Yellow Boutique, each saree is a work of slow fashion art. We partner directly with artisan weavers in traditional Indian hubs (from Kanchipuram pit looms to Varanasi brocade suites) to safeguard historic loom guilds.
                 </p>
@@ -234,16 +234,16 @@ export default function Home() {
 
               <div className="grid grid-cols-3 gap-4 mt-4 pt-6 border-t border-gold-200/20">
                 <div className="flex flex-col">
-                  <span className="font-serif text-3xl text-burgundy-800 font-semibold hover:text-gold-accent transition-colors">100%</span>
-                  <span className="text-[9px] uppercase tracking-wider text-muted font-bold mt-1">Silk Mark Certified</span>
+                  <span className="font-serif text-3xl text-white font-semibold hover:text-gold-accent transition-colors">100%</span>
+                  <span className="text-[9px] uppercase tracking-wider text-white/70 font-bold mt-1">Silk Mark Certified</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-serif text-3xl text-burgundy-800 font-semibold hover:text-gold-accent transition-colors">450+</span>
-                  <span className="text-[9px] uppercase tracking-wider text-muted font-bold mt-1">Master Weavers</span>
+                  <span className="font-serif text-3xl text-white font-semibold hover:text-gold-accent transition-colors">450+</span>
+                  <span className="text-[9px] uppercase tracking-wider text-white/70 font-bold mt-1">Master Weavers</span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="font-serif text-3xl text-burgundy-800 font-semibold hover:text-gold-accent transition-colors">30 Days</span>
-                  <span className="text-[9px] uppercase tracking-wider text-muted font-bold mt-1">Average Weave Period</span>
+                  <span className="font-serif text-3xl text-white font-semibold hover:text-gold-accent transition-colors">30 Days</span>
+                  <span className="text-[9px] uppercase tracking-wider text-white/70 font-bold mt-1">Average Weave Period</span>
                 </div>
               </div>
             </motion.div>
@@ -296,7 +296,7 @@ export default function Home() {
                 <div className="w-full md:w-1/2 h-[220px] md:h-full overflow-hidden relative">
                   <div className="absolute inset-0 bg-burgundy-950/20 z-10 pointer-events-none" />
                   <img 
-                    src={col.image} 
+                    src={optimizeUnsplashUrl(col.image, 600)} 
                     alt={col.title} 
                     className="w-full h-full object-cover object-top hover:scale-105 transition-transform duration-700"
                   />
@@ -390,7 +390,7 @@ export default function Home() {
               viewport={{ once: true }} transition={{ duration: 0.55, delay: 0.1 }}
               className="col-span-1 md:col-span-2 relative group overflow-hidden cursor-pointer"
             >
-              <img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=900&auto=format&fit=crop" alt="Banarasi Silk"
+              <img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?q=80&w=600&auto=format&fit=crop" alt="Banarasi Silk"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm border border-gold-accent/40 px-2.5 py-1">
@@ -486,7 +486,7 @@ export default function Home() {
               viewport={{ once: true }} transition={{ duration: 0.55, delay: 0.35 }}
               className="col-span-1 md:col-span-2 relative group overflow-hidden cursor-pointer"
             >
-              <img src="https://images.unsplash.com/photo-1631857455684-a54a2f03665f?q=80&w=900&auto=format&fit=crop" alt="Bridal Collection"
+              <img src="https://images.unsplash.com/photo-1631857455684-a54a2f03665f?q=80&w=600&auto=format&fit=crop" alt="Bridal Collection"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-sm border border-gold-accent/40 px-2.5 py-1">
@@ -596,7 +596,7 @@ export default function Home() {
             >
               {/* Full image */}
               <img
-                src={ARTISAN_STEPS[activeArtisanStep].image}
+                src={optimizeUnsplashUrl(ARTISAN_STEPS[activeArtisanStep].image, 800)}
                 alt={ARTISAN_STEPS[activeArtisanStep].title}
                 className="w-full h-full object-cover object-center scale-105"
               />
@@ -704,7 +704,7 @@ export default function Home() {
                   <Link to={`/saree/${saree.id}`} className="block w-full h-full">
                     {/* Image */}
                     <img
-                      src={saree.image}
+                      src={optimizeUnsplashUrl(saree.image, 500)}
                       alt={saree.name}
                       className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-110"
                       loading="lazy"

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Sparkles, MessageSquare } from 'lucide-react';
+import { optimizeUnsplashUrl } from '../../utils/image';
 
 export default function SareeCard({ saree }) {
   if (!saree) return null;
@@ -26,7 +27,7 @@ export default function SareeCard({ saree }) {
 
         {/* Main image */}
         <img
-          src={saree.image}
+          src={optimizeUnsplashUrl(saree.image, 450)}
           alt={saree.name}
           className="w-full h-full object-cover object-top scale-100 group-hover:scale-105 transition-transform duration-[1s] ease-[cubic-bezier(0.16,1,0.3,1)]"
           loading="lazy"
@@ -71,7 +72,9 @@ export default function SareeCard({ saree }) {
           </Link>
 
           <a
-            href={`https://wa.me/919876543210?text=Hi! I would like to inquire about purchasing the ${saree.name} (${saree.id}) priced at ${saree.price}.`}
+            href={`https://wa.me/919363745680?text=${encodeURIComponent(
+              `Hi! I would like to inquire about purchasing the ${saree.name} (${saree.id}) priced at ${saree.price}.\n\nProduct Link: ${window.location.origin}/saree/${saree.id}`
+            )}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-1.5 bg-[#25D366] hover:bg-[#128C7E] text-white px-4 py-2 rounded-full text-[9px] uppercase tracking-widest font-extrabold transition-all duration-300 shadow-sm"

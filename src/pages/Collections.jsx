@@ -1,22 +1,43 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Layers, Search, Sparkles } from 'lucide-react';
-import { collections, allSareesList } from '../data';
+import { ArrowRight, Layers, Search, Sparkles, Loader } from 'lucide-react';
+import { getCollections, getAllProducts } from '../api/admin';
 import { SareeCard, Masonry, Footer } from '../components';
+import { optimizeUnsplashUrl } from '../utils/image';
 
 export default function Collections() {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('search') || '';
 
+  const [collections, setCollections] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const cols = await getCollections();
+        const prods = await getAllProducts();
+        setCollections(cols);
+        setAllProducts(prods);
+      } catch (err) {
+        console.error('Failed to load database catalog:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
+
   // Filter sarees if in search mode
   const filteredSarees = searchQuery
-    ? allSareesList.filter(
+    ? allProducts.filter(
         (saree) =>
-          saree.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          saree.material.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          saree.color.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          saree.description.toLowerCase().includes(searchQuery.toLowerCase())
+          (saree.name && saree.name.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (saree.material && saree.material.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (saree.color && saree.color.toLowerCase().includes(searchQuery.toLowerCase())) ||
+          (saree.description && saree.description.toLowerCase().includes(searchQuery.toLowerCase()))
       )
     : [];
 
@@ -55,7 +76,7 @@ export default function Collections() {
           </p>
         </div>
       </section>
-
+ 
       {/* Main Content Area */}
       <section className="container-main pt-16">
         {searchQuery ? (
@@ -65,7 +86,7 @@ export default function Collections() {
               <Masonry
                 items={filteredSarees.map((saree, index) => ({
                   id: saree.id,
-                  img: saree.image,
+                  img: optimizeUnsplashUrl(saree.image, 500),
                   url: `/saree/${saree.id}`,
                   height: [600, 480, 720, 520, 800, 560, 680, 500][index % 8]
                 }))}
@@ -118,7 +139,7 @@ export default function Collections() {
                     {/* Dark gradient mesh overlay for high contrast */}
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0A080C] via-[#0A080C]/75 to-transparent z-10 transition-colors duration-500 group-hover:via-[#0A080C]/65" />
                     <img
-                      src={col.image}
+                      src={optimizeUnsplashUrl(col.image, 600)}
                       alt={col.title}
                       className="w-full h-full object-cover object-center scale-100 group-hover:scale-110 transition-transform duration-[1.5s] ease-[cubic-bezier(0.16,1,0.3,1)]"
                     />
@@ -130,7 +151,7 @@ export default function Collections() {
                       {col.origin}
                     </span>
                     <span className="text-[8px] uppercase tracking-wider font-bold px-2.5 py-1 rounded-sm bg-[var(--bg-card)]/40 border border-[var(--border-glow)] text-[var(--text-sub)]">
-                      {col.count} Masterpieces
+                      {col.productCount || 0} Masterpieces
                     </span>
                   </div>
 

@@ -1,37 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Navbar, Footer, TrueFocus, ScrollToTop } from './components';
 
 // Pages
 import Home from './pages/Home';
-import Collections from './pages/Collections';
-import CategoryPage from './pages/CategoryPage';
-import SareeDetailPage from './pages/SareeDetailPage';
-import About from './pages/About';
-import Contact from './pages/Contact';
+
+// Lazy-loaded pages for bundle size optimization and faster loading
+const Collections = lazy(() => import('./pages/Collections'));
+const CategoryPage = lazy(() => import('./pages/CategoryPage'));
+const SareeDetailPage = lazy(() => import('./pages/SareeDetailPage'));
+const About = lazy(() => import('./pages/About'));
+const Contact = lazy(() => import('./pages/Contact'));
+const Admin = lazy(() => import('./pages/Admin'));
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
 
   useEffect(() => {
-    if (isLoading) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = '';
+    
+    // Watch pathname changes since Router is inside App
+    const handleLocationChange = () => {
+      const path = window.location.pathname;
+      const hasToken = !!localStorage.getItem('gy_admin_token');
+      if (hasToken && !path.startsWith('/admin')) {
+        window.location.replace('/admin');
+      } else {
+        setCurrentPath(path);
+      }
+    };
+    
+    // Add interval to check path since standard React Router pushState doesn't fire events
+    const pathInterval = setInterval(handleLocationChange, 200);
+
     return () => {
       document.body.style.overflow = '';
+      clearInterval(pathInterval);
     };
-  }, [isLoading]);
-
-  useEffect(() => {
-    // End loader after 2.6 seconds (allows the words to animate fully once)
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2600);
-    return () => clearTimeout(timer);
   }, []);
+
+  const isAdmin = currentPath.startsWith('/admin');
 
   return (
     <Router>
@@ -81,20 +91,23 @@ export default function App() {
         <div className="absolute bottom-[5vh] right-[10vw] w-[40vw] h-[40vw] bg-burgundy-900/4 rounded-full blur-[100px] pointer-events-none z-0 animate-pulse" style={{ animationDuration: '11s' }} />
 
         {/* Navigation Bar */}
-        <Navbar />
+        {!isAdmin && <Navbar />}
 
         {/* Main Content Area */}
-        <main className="min-h-screen pt-[68px] sm:pt-[76px] relative z-10">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/collections" element={<Collections />} />
-            <Route path="/collections/:category" element={<CategoryPage />} />
-            <Route path="/saree/:id" element={<SareeDetailPage />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            {/* Fallback to Home */}
-            <Route path="*" element={<Home />} />
-          </Routes>
+        <main className={`min-h-screen relative z-10 ${isAdmin ? 'pt-0' : 'pt-[68px] sm:pt-[76px]'}`}>
+          <Suspense fallback={<div className="min-h-screen bg-[#0E0C10]" />}>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/collections" element={<Collections />} />
+              <Route path="/collections/:category" element={<CategoryPage />} />
+              <Route path="/saree/:id" element={<SareeDetailPage />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/admin" element={<Admin />} />
+              {/* Fallback to Home */}
+              <Route path="*" element={<Home />} />
+            </Routes>
+          </Suspense>
         </main>
       </div>
     </Router>
