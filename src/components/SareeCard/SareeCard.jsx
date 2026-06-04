@@ -82,7 +82,7 @@ export default function SareeCard({ saree }) {
           </div>
 
           <a
-            href={`https://wa.me/919363745680?text=${encodeURIComponent(
+            href={`https://wa.me/916379512108?text=${encodeURIComponent(
               `Hi! I would like to inquire about purchasing the ${saree.name} (${saree.id}) priced at ${saree.price}.\n\nProduct Link: ${window.location.origin}/saree/${saree.id}`
             )}`}
             onClick={handleInquireClick}

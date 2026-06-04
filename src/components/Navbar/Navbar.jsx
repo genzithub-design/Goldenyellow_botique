@@ -181,7 +181,7 @@ export default function Navbar() {
                   Book Consultation <ArrowRight size={12} />
                 </Link>
                 <a
-                  href="https://wa.me/919363745680"
+                  href="https://wa.me/916379512108"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 border border-cream-200/20 text-cream-200 hover:text-white px-6 py-3 text-[10px] uppercase tracking-widest font-semibold hover:bg-white/5 transition-all duration-300"

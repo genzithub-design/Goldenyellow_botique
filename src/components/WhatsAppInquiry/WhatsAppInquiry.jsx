@@ -2,7 +2,7 @@ import React from 'react';
 import { MessageSquare } from 'lucide-react';
 
 export default function WhatsAppInquiry({ saree, className = '' }) {
-  const phoneNumber = '919363745680'; // Replace with actual business number
+  const phoneNumber = '916379512108'; // Replace with actual business number
   
   const getWhatsAppLink = () => {
     const pageUrl = `${window.location.origin}/saree/${saree.id}`;
