@@ -1,40 +1,33 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ChevronRight, BookOpen, ShieldCheck, Truck, RefreshCw, Loader } from 'lucide-react';
-import { getCollections, getProducts } from '../api/admin';
+import { ChevronRight } from 'lucide-react';
 import { SareeCard, Footer } from '../components';
 import { optimizeUnsplashUrl } from '../utils/image';
+import { collections, products } from '../data';
 
 export default function CategoryPage() {
   const { category: categorySlug } = useParams();
   const [sortBy, setSortBy] = useState('featured');
+  const [activeSubcategory, setActiveSubcategory] = useState('All');
 
-  const [collections, setCollections] = useState([]);
-  const [rawProducts, setRawProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadCategoryData() {
-      try {
-        const cols = await getCollections();
-        setCollections(cols);
-        if (categorySlug) {
-          const prods = await getProducts(categorySlug);
-          setRawProducts(prods);
-        }
-      } catch (err) {
-        console.error('Failed to load database category catalog:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadCategoryData();
-  }, [categorySlug]);
-
-  // Find collection details
+  // Find collection details statically
   const collectionMeta = useMemo(() => {
     return collections.find((col) => col.slug === categorySlug);
-  }, [collections, categorySlug]);
+  }, [categorySlug]);
+
+  // Filter products by collection slug
+  const collectionProducts = useMemo(() => {
+    if (!categorySlug) return [];
+    return products.filter((p) => p.collectionSlug === categorySlug);
+  }, [categorySlug]);
+
+  // Filter products by subcategory
+  const filteredProducts = useMemo(() => {
+    if (activeSubcategory === 'All') {
+      return collectionProducts;
+    }
+    return collectionProducts.filter((p) => p.subcategory === activeSubcategory);
+  }, [collectionProducts, activeSubcategory]);
 
   // Helper: parse price string e.g. "₹45,500" -> 45500
   const parsePrice = (priceStr) => {
@@ -44,30 +37,21 @@ export default function CategoryPage() {
 
   // Sort products
   const sortedProducts = useMemo(() => {
-    const products = [...rawProducts];
+    const prods = [...filteredProducts];
     if (sortBy === 'price-low') {
-      return products.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
+      return prods.sort((a, b) => parsePrice(a.price) - parsePrice(b.price));
     }
     if (sortBy === 'price-high') {
-      return products.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
+      return prods.sort((a, b) => parsePrice(b.price) - parsePrice(a.price));
     }
-    return products; // 'featured'
-  }, [rawProducts, sortBy]);
-
-  if (loading) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center text-gold-accent gap-2">
-        <Loader className="animate-spin" size={28} />
-        <span className="text-[10px] uppercase tracking-widest font-bold">Synchronizing Showroom...</span>
-      </div>
-    );
-  }
+    return prods; // 'featured'
+  }, [filteredProducts, sortBy]);
 
   if (!collectionMeta) {
     return (
       <div className="container-main py-24 text-center">
         <h2 className="font-serif text-3xl mb-4 text-[var(--text-main)]">Category Not Found</h2>
-        <p className="text-xs text-[var(--text-muted)] mb-8">The requested saree collection catalog could not be loaded.</p>
+        <p className="text-xs text-[var(--text-muted)] mb-8">The requested collection catalog could not be loaded.</p>
         <Link to="/collections" className="btn-gold py-2.5 px-6 text-[9px] tracking-widest uppercase font-bold inline-flex">
           Back to All Collections
         </Link>
@@ -89,84 +73,16 @@ export default function CategoryPage() {
         </div>
       </div>
 
-      {/* 2. CATEGORY HERO BANNER */}
-      <section className="relative h-[48vh] bg-[var(--bg-secondary)] overflow-hidden border-b border-[var(--border-glow)]">
-        {/* Glow point overlays */}
-        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[35vw] h-[35vw] rounded-full bg-gold-accent/5 blur-[120px] pointer-events-none" />
-        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[30vw] h-[30vw] rounded-full bg-burgundy-900/10 blur-[100px] pointer-events-none animate-pulse" />
-
-        {/* Ambient Dark Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-secondary)] via-[var(--bg-secondary)]/60 to-transparent z-10" />
-        <img
-          src={optimizeUnsplashUrl(collectionMeta.image, 800)}
-          alt={collectionMeta.title}
-          className="w-full h-full object-cover object-center absolute inset-0 opacity-40 scale-102 hover:scale-105 transition-transform duration-[2s]"
-        />
+      {/* 2. MINIMAL LUXURY HEADER */}
+      <section className="bg-[#08060A] py-14 relative overflow-hidden border-b border-gold-accent/10">
+        {/* Subtle decorative background glows */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[30vh] rounded-full bg-gold-accent/5 blur-[120px] pointer-events-none" />
         
-        <div className="absolute inset-0 z-20 flex flex-col justify-end pb-12">
-          <div className="container-main text-[var(--text-main)] flex flex-col gap-3 max-w-5xl">
-            <span className="text-[9px] uppercase tracking-[0.35em] text-gold-accent font-extrabold px-3 py-1.5 rounded-full bg-[var(--bg-card)] border border-[var(--border-glow)] w-fit">
-              Weaving Origin: {collectionMeta.origin}
-            </span>
-            
-            <h1 className="font-sans text-5xl sm:text-7xl font-black uppercase tracking-tight text-[var(--text-main)] leading-none mt-2">
-              THE 
-              <span className="text-transparent font-serif italic font-light lowercase text-gold-accent block sm:inline normal-case ml-0 sm:ml-4">
-                {collectionMeta.title}.
-              </span>
-            </h1>
-
-            <p className="text-xs sm:text-sm text-[var(--text-muted)] font-light leading-relaxed max-w-2xl mt-3">
-              {collectionMeta.description}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. MATERIAL HISTORICAL DESCRIPTION & SHOPPING ASSURANCES BOX */}
-      <section className="bg-[var(--bg-card)] border-b border-[var(--border-glow)] py-12 relative overflow-hidden">
-        <div className="container-main max-w-6xl flex flex-col lg:flex-row gap-8 items-start justify-between relative z-10">
-          
-          {/* History info left */}
-          <div className="flex gap-6 items-start max-w-3xl">
-            <div className="hidden sm:block p-3.5 bg-[var(--bg-card-inner)] text-gold-accent border border-[var(--border-glow)] rounded-sm">
-              <BookOpen size={24} />
-            </div>
-            <div className="flex flex-col gap-2">
-              <h4 className="text-[10px] uppercase tracking-[0.25em] font-extrabold text-gold-accent">
-                Heritage & History
-              </h4>
-              <p className="text-xs text-[var(--text-muted)] leading-relaxed font-light">
-                {collectionMeta.weavingHistory}
-              </p>
-            </div>
-          </div>
-
-          {/* Trust assurances right */}
-          <div className="flex flex-col sm:flex-row lg:flex-col gap-4 shrink-0 w-full lg:w-64 border-t lg:border-t-0 lg:border-l border-[var(--border-glow)] pt-6 lg:pt-0 lg:pl-8 text-xs">
-            <div className="flex items-center gap-3">
-              <Truck className="text-gold-accent shrink-0" size={16} />
-              <div className="flex flex-col">
-                <span className="font-bold text-[10px] uppercase tracking-wider">Free Global Delivery</span>
-                <span className="text-[9px] text-[var(--text-muted)]">Insured transit packaging</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <ShieldCheck className="text-gold-accent shrink-0" size={16} />
-              <div className="flex flex-col">
-                <span className="font-bold text-[10px] uppercase tracking-wider">Pure Silk Guaranteed</span>
-                <span className="text-[9px] text-[var(--text-muted)]">Official Silk Mark Certified</span>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <RefreshCw className="text-gold-accent shrink-0" size={16} />
-              <div className="flex flex-col">
-                <span className="font-bold text-[10px] uppercase tracking-wider">Custom Blouses</span>
-                <span className="text-[9px] text-[var(--text-muted)]">Fitted before dispatch</span>
-              </div>
-            </div>
-          </div>
-
+        <div className="container-main text-center relative z-10 flex flex-col items-center">
+          <h1 className="font-serif text-4xl sm:text-5xl text-white font-light tracking-[0.2em] uppercase">
+            {collectionMeta.title}
+          </h1>
+          <div className="w-16 h-[1px] bg-gold-accent mt-5 opacity-60" />
         </div>
       </section>
 
@@ -174,6 +90,35 @@ export default function CategoryPage() {
       <section className="container-main pt-16">
         <div className="flex flex-col gap-8 w-full">
           
+          {/* Subcategories Filter Chips (Luxury Glassmorphic Pills) */}
+          {collectionMeta.subcategories && collectionMeta.subcategories.length > 0 && (
+            <div className="flex flex-wrap gap-3 items-center justify-start py-2 border-b border-gold-accent/10 pb-8">
+              <button
+                onClick={() => setActiveSubcategory('All')}
+                className={`text-[9px] uppercase tracking-[0.2em] px-5 py-2.5 rounded-full font-extrabold transition-all duration-500 border ${
+                  activeSubcategory === 'All'
+                    ? 'bg-gold-accent text-burgundy-950 border-gold-accent shadow-xl shadow-gold-accent/20 scale-102'
+                    : 'bg-white/5 backdrop-blur-md text-white/70 border-gold-accent/15 hover:bg-white/10 hover:border-gold-accent/30 hover:text-white hover:-translate-y-0.5'
+                }`}
+              >
+                All
+              </button>
+              {collectionMeta.subcategories.map((sub) => (
+                <button
+                  key={sub}
+                  onClick={() => setActiveSubcategory(sub)}
+                  className={`text-[9px] uppercase tracking-[0.2em] px-5 py-2.5 rounded-full font-extrabold transition-all duration-500 border ${
+                    activeSubcategory === sub
+                      ? 'bg-gold-accent text-burgundy-950 border-gold-accent shadow-xl shadow-gold-accent/20 scale-102'
+                      : 'bg-white/5 backdrop-blur-md text-white/70 border-gold-accent/15 hover:bg-white/10 hover:border-gold-accent/30 hover:text-white hover:-translate-y-0.5'
+                  }`}
+                >
+                  {sub}
+                </button>
+              ))}
+            </div>
+          )}
+
           {/* Sorting / Catalog details bar */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-[var(--border-glow)] pb-4 mb-2">
             <div className="flex items-center gap-4">
@@ -181,7 +126,7 @@ export default function CategoryPage() {
                 Heritage Showroom
               </span>
               <span className="text-[11px] text-[var(--text-muted)] tracking-wider">
-                Showing <strong>{sortedProducts.length}</strong> mastercraft sarees
+                Showing <strong>{sortedProducts.length}</strong> premium {collectionMeta.title?.toLowerCase()}
               </span>
             </div>
             

@@ -1,25 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, MapPin, Phone, Clock, Award } from 'lucide-react';
 import { FaInstagram, FaFacebook } from 'react-icons/fa';
-import { getCollections } from '../../api/admin';
+import { collections } from '../../data';
 
 export default function Footer() {
-  const [collections, setCollections] = useState([]);
-
-  useEffect(() => {
-    let active = true;
-    getCollections()
-      .then((data) => {
-        if (active) setCollections(data);
-      })
-      .catch((err) => {
-        console.error('Failed to load collections for footer:', err);
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
   return (
     <footer className="bg-charcoal-900 text-cream-100 border-t border-gold-800/40 relative z-30 grain-bg">
       {/* Decorative Golden Line */}

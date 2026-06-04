@@ -1,11 +1,21 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Sparkles, MessageSquare } from 'lucide-react';
 import { optimizeUnsplashUrl } from '../../utils/image';
 
 export default function SareeCard({ saree }) {
+  const navigate = useNavigate();
+
   if (!saree) return null;
+
+  const handleCardClick = () => {
+    navigate(`/saree/${saree.id}`);
+  };
+
+  const handleInquireClick = (e) => {
+    e.stopPropagation();
+  };
 
   return (
     <motion.div
@@ -13,7 +23,8 @@ export default function SareeCard({ saree }) {
         hidden: { opacity: 0, y: 20 },
         visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
       }}
-      className="group flex flex-col w-full bg-[var(--bg-card)] border border-[var(--border-glow)] rounded-lg p-3.5 shadow-sm hover:shadow-xl transition-all duration-500"
+      onClick={handleCardClick}
+      className="group cursor-pointer flex flex-col w-full bg-[var(--bg-card)] border border-[var(--border-glow)] rounded-lg p-3.5 shadow-sm hover:shadow-xl transition-all duration-500"
     >
       {/* 1. Image Container (with top overlays) */}
       <div className="w-full h-[320px] sm:h-[340px] overflow-hidden rounded-md relative bg-[var(--bg-card-inner)]">
@@ -50,7 +61,7 @@ export default function SareeCard({ saree }) {
         {/* Title & Price Row */}
         <div className="flex justify-between items-start gap-4 mt-2">
           <h3 className="font-serif text-lg text-[var(--text-main)] font-medium leading-tight line-clamp-1 group-hover:text-gold-accent transition-colors duration-300">
-            <Link to={`/saree/${saree.id}`}>{saree.name}</Link>
+            <span>{saree.name}</span>
           </h3>
           <span className="font-sans text-sm font-extrabold text-gold-accent shrink-0">
             {saree.price}
@@ -64,17 +75,17 @@ export default function SareeCard({ saree }) {
 
         {/* Actions bar */}
         <div className="flex items-center justify-between border-t border-[var(--border-glow)] pt-3.5 mt-4 gap-4">
-          <Link
-            to={`/saree/${saree.id}`}
+          <div
             className="text-[9px] uppercase tracking-widest font-extrabold text-[var(--text-main)] hover:text-gold-accent transition-colors duration-300"
           >
             View Details &rarr;
-          </Link>
+          </div>
 
           <a
             href={`https://wa.me/919363745680?text=${encodeURIComponent(
               `Hi! I would like to inquire about purchasing the ${saree.name} (${saree.id}) priced at ${saree.price}.\n\nProduct Link: ${window.location.origin}/saree/${saree.id}`
             )}`}
+            onClick={handleInquireClick}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-1.5 bg-[#25D366] hover:bg-[#128C7E] text-white px-4 py-2 rounded-full text-[9px] uppercase tracking-widest font-extrabold transition-all duration-300 shadow-sm"

@@ -1,0 +1,59 @@
+[
+
+  {
+    "id": "prod-maxi-650-1",
+    "name": "Designer Cotton Maxi Dress",
+    "price": "₹650",
+    "color": "Multi-Color",
+    "material": "Premium Cotton",
+    "image": "/images/Salwars/maxy/shoot1IMG_9295.JPG",
+    "description": "A flowy tiered maxi dress designed for comfort and contemporary style, featuring beautiful hand-block prints and soft cotton fabric.",
+    "occasion": "Casual Wear / Evening Brunch",
+    "collectionSlug": "salwars",
+    "subcategory": "Maxis",
+    "weavingTechnique": "Block Print",
+    "careInstructions": "Gentle machine wash cold"
+  },
+  {
+    "id": "prod-maxi-650-2",
+    "name": "Designer Cotton Maxi Dress",
+    "price": "₹650",
+    "color": "Multi-Color",
+    "material": "Premium Cotton",
+    "image": "/images/Salwars/maxy/shoot1IMG_9297.JPG",
+    "description": "A flowy tiered maxi dress designed for comfort and contemporary style, featuring beautiful hand-block prints and soft cotton fabric.",
+    "occasion": "Casual Wear / Evening Brunch",
+    "collectionSlug": "salwars",
+    "subcategory": "Maxis",
+    "weavingTechnique": "Block Print",
+    "careInstructions": "Gentle machine wash cold"
+  },
+  {
+    "id": "prod-maxi-650-3",
+    "name": "Designer Cotton Maxi Dress",
+    "price": "₹650",
+    "color": "Multi-Color",
+    "material": "Premium Cotton",
+    "image": "/images/Salwars/maxy/shoot1IMG_9298.JPG",
+    "description": "A flowy tiered maxi dress designed for comfort and contemporary style, featuring beautiful hand-block prints and soft cotton fabric.",
+    "occasion": "Casual Wear / Evening Brunch",
+    "collectionSlug": "salwars",
+    "subcategory": "Maxis",
+    "weavingTechnique": "Block Print",
+    "careInstructions": "Gentle machine wash cold"
+  },
+  {
+    "id": "prod-maxi-650-4",
+    "name": "Designer Cotton Maxi Dress",
+    "price": "₹650",
+    "color": "Multi-Color",
+    "material": "Premium Cotton",
+    "image": "/images/Salwars/maxy/shoot1IMG_9300.JPG",
+    "description": "A flowy tiered maxi dress designed for comfort and contemporary style, featuring beautiful hand-block prints and soft cotton fabric.",
+    "occasion": "Casual Wear / Evening Brunch",
+    "collectionSlug": "salwars",
+    "subcategory": "Maxis",
+    "weavingTechnique": "Block Print",
+    "careInstructions": "Gentle machine wash cold"
+  }
+]

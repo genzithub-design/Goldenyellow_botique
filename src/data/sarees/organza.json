@@ -1,0 +1,18 @@
+[
+  {
+    "id": "prod-organza-1",
+    "name": "Aura Mint Floral Embroidered Organza",
+    "price": "₹12,800",
+    "color": "Mint Green",
+    "material": "Sheer Organza",
+    "image": "https://images.unsplash.com/photo-1608748010899-18f300247112?q=80&w=600&auto=format&fit=crop",
+    "description": "A delicate sheer organza drape adorned with hand-embroidered floral motifs and satin borders.",
+    "occasion": "Evening Parties / Cocktails",
+    "collectionSlug": "sarees",
+    "subcategory": "Organza Sarees",
+    "zariType": "Satin borders with Threadwork",
+    "weavingTechnique": "Embroidery",
+    "borderSize": "Satin border (3 inches)",
+    "careInstructions": "Dry clean only"
+  }
+]

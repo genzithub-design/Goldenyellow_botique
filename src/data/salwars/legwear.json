@@ -1,0 +1,16 @@
+[
+  {
+    "id": "prod-legwear-1",
+    "name": "Classic Off-White Cotton Chudidar",
+    "price": "₹1,200",
+    "color": "Ivory White",
+    "material": "Lycra Cotton",
+    "image": "https://images.unsplash.com/photo-1605722243979-fe0be8158232?q=80&w=600&auto=format&fit=crop",
+    "description": "Super-soft stretch cotton chudidar leggings designed for ultimate comfort and perfect gathers.",
+    "occasion": "Daily wear",
+    "collectionSlug": "salwars",
+    "subcategory": "Legwear",
+    "weavingTechnique": "Stretch Loom Knit",
+    "careInstructions": "Normal machine wash"
+  }
+]

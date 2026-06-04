@@ -139,7 +139,7 @@ export default function Navbar() {
           >
             {/* Ambient luxury glows */}
             <div className="absolute top-[10%] left-[-20%] w-[80vw] h-[80vw] bg-gold-accent/5 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-[10%] right-[-20%] w-[70vw] h-[70vw] bg-burgundy-900/10 rounded-full blur-[100px] pointer-events-none animate-pulse" />
+            <div className="absolute bottom-[10%] right-[-20%] w-[70vw] h-[70vw] bg-burgundy-900/10 rounded-full blur-[100px] pointer-events-none" />
 
             <div className="relative z-10 flex flex-col items-center gap-12 max-w-sm px-6">
               <span className="text-[9px] uppercase tracking-[0.35em] text-gold-accent opacity-85">

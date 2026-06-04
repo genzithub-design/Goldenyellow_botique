@@ -11,7 +11,7 @@ export default function Contact() {
       <section className="bg-[var(--bg-secondary)] text-[var(--text-main)] py-24 sm:py-32 relative overflow-hidden border-b border-[var(--border-glow)]">
         {/* Glow Effects */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[40vw] h-[40vw] rounded-full bg-gold-accent/5 blur-[120px] pointer-events-none" />
-        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[35vw] h-[35vw] rounded-full bg-burgundy-900/10 blur-[100px] pointer-events-none animate-pulse" />
+        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[35vw] h-[35vw] rounded-full bg-burgundy-900/10 blur-[100px] pointer-events-none" />
         
         {/* Big ghost text behind */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none z-0">

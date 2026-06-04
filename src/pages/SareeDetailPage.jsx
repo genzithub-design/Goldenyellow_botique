@@ -1,45 +1,36 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronRight, ShieldCheck, Heart, Share2, CornerDownRight, Sparkles, Loader } from 'lucide-react';
-import { getAllProducts } from '../api/admin';
 import { WhatsAppInquiry, SareeCard, Footer } from '../components';
 import { optimizeUnsplashUrl } from '../utils/image';
+import { products } from '../data';
 
 export default function SareeDetailPage() {
   const { id } = useParams();
   const [zoomStyle, setZoomStyle] = useState({ display: 'none', transform: 'scale(1)' });
   const containerRef = useRef(null);
+  const [activeImage, setActiveImage] = useState(null);
 
-  const [allProducts, setAllProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function loadProductData() {
-      try {
-        const prods = await getAllProducts();
-        setAllProducts(prods);
-      } catch (err) {
-        console.error('Failed to load database catalog products:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadProductData();
-  }, []);
-
-  // Find the current saree
+  // Find the current saree statically
   const saree = useMemo(() => {
-    return allProducts.find((item) => item.id === id);
-  }, [allProducts, id]);
+    return products.find((item) => item.id === id);
+  }, [id]);
+
+  const currentImage = activeImage || (saree ? saree.image : null);
+
+  // Reset active image when saree ID changes
+  useEffect(() => {
+    setActiveImage(null);
+  }, [id]);
 
   // Find related sarees (same material or collection, excluding current)
   const relatedSarees = useMemo(() => {
     if (!saree) return [];
-    return allProducts
+    return products
       .filter((item) => item.material === saree.material && item.id !== saree.id)
       .slice(0, 3);
-  }, [allProducts, saree]);
+  }, [saree]);
 
   // Find category slug for breadcrumbs
   const categorySlug = useMemo(() => {
@@ -48,6 +39,7 @@ export default function SareeDetailPage() {
 
   // Beautiful interactive zoom-magnifier on hover
   const handleMouseMove = (e) => {
+    if (!containerRef.current) return;
     const { left, top, width, height } = containerRef.current.getBoundingClientRect();
     const x = ((e.clientX - left) / width) * 100;
     const y = ((e.clientY - top) / height) * 100;
@@ -62,14 +54,7 @@ export default function SareeDetailPage() {
     setZoomStyle({ display: 'none', transform: 'scale(1)' });
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-[60vh] flex flex-col items-center justify-center text-gold-accent gap-2">
-        <Loader className="animate-spin" size={28} />
-        <span className="text-[10px] uppercase tracking-widest font-bold">Revealing Weave Craft...</span>
-      </div>
-    );
-  }
+
 
   if (!saree) {
     return (
@@ -118,12 +103,14 @@ export default function SareeDetailPage() {
               className="relative aspect-[3/4] bg-[#120F15] border border-white/5 rounded-lg overflow-hidden cursor-crosshair shadow-2xl"
             >
               {/* Actual Image */}
-              <img
-                src={optimizeUnsplashUrl(saree.image, 1000)}
-                alt={saree.name}
-                className="w-full h-full object-cover object-top transition-transform duration-200"
-                style={zoomStyle.display === 'none' ? {} : { transform: zoomStyle.transform, transformOrigin: zoomStyle.transformOrigin }}
-              />
+              {currentImage && (
+                <img
+                  src={optimizeUnsplashUrl(currentImage, 1000)}
+                  alt={saree.name}
+                  className="w-full h-full object-cover object-top transition-transform duration-200"
+                  style={zoomStyle.display === 'none' ? {} : { transform: zoomStyle.transform, transformOrigin: zoomStyle.transformOrigin }}
+                />
+              )}
 
               {/* Hover indicator cue */}
               {zoomStyle.display === 'none' && (
@@ -133,6 +120,29 @@ export default function SareeDetailPage() {
                 </div>
               )}
             </div>
+
+            {/* Thumbnail Gallery (rendered if saree.images is provided and has multiple images) */}
+            {saree.images && saree.images.length > 1 && (
+              <div className="flex flex-wrap gap-3 mt-1">
+                {saree.images.map((img, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveImage(img)}
+                    className={`w-20 aspect-[3/4] rounded-md overflow-hidden border transition-all duration-300 ${
+                      currentImage === img
+                        ? 'border-gold-accent shadow-md scale-105 opacity-100'
+                        : 'border-white/5 opacity-50 hover:opacity-95 hover:border-white/20'
+                    }`}
+                  >
+                    <img
+                      src={optimizeUnsplashUrl(img, 200)}
+                      alt={`${saree.name} view ${idx + 1}`}
+                      className="w-full h-full object-cover object-top"
+                    />
+                  </button>
+                ))}
+              </div>
+            )}
             
             {/* Authenticity Certificate Box */}
             <div className="flex items-center gap-4 bg-[#120F15] border border-white/5 p-5 rounded-lg">

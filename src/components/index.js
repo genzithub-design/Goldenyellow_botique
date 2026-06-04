@@ -10,3 +10,4 @@ export { default as ScrollToTop } from './ScrollToTop';
 export { default as Stack } from './Stack';
 export { default as TrueFocus } from './TrueFocus';
 export { default as WhatsAppInquiry } from './WhatsAppInquiry';
+export { default as BackButton } from './BackButton/BackButton';

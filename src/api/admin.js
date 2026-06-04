@@ -1,55 +1,130 @@
-const API_BASE = 'https://goldenyellow-botique-server-md5q5imne.vercel.app/api';
-const TOKEN_KEY = 'gy_admin_token';
+import { collections as defaultCollections, products as defaultProducts } from '../data';
 
-function getHeaders(extraHeaders = {}) {
-  const token = localStorage.getItem(TOKEN_KEY);
-  return {
-    ...extraHeaders,
-    ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-  };
-}
+const TOKEN_KEY = 'gy_admin_token';
+const COLLECTIONS_KEY = 'gy_collections';
+const PRODUCTS_KEY = 'gy_products';
+
+// Helper to safely stringify and parse
+const getStoredData = (key, defaultVal = []) => {
+  const data = localStorage.getItem(key);
+  try {
+    return data ? JSON.parse(data) : defaultVal;
+  } catch (e) {
+    console.error(`Failed to parse key ${key}:`, e);
+    return defaultVal;
+  }
+};
+
+const setStoredData = (key, data) => {
+  localStorage.setItem(key, JSON.stringify(data));
+};
+
+// Seed initial database if empty or sync with JSON changes
+const seedDatabase = () => {
+  const originalSlugs = ["kanchipuram-silk", "banarasi-silk", "cotton-weaves", "organza-sarees", "bridal-collection"];
+  const originalProdIds = ["prod-kanchi-1", "prod-banarasi-1", "prod-cotton-1", "prod-organza-1", "prod-bridal-1"];
+
+  let updatedCols = [];
+  if (!localStorage.getItem(COLLECTIONS_KEY)) {
+    updatedCols = defaultCollections;
+    setStoredData(COLLECTIONS_KEY, defaultCollections);
+  } else {
+    const storedCols = getStoredData(COLLECTIONS_KEY);
+    const newSlugs = defaultCollections.map(c => c.slug);
+    
+    // Filter out deleted defaults, keep updated defaults and custom ones
+    updatedCols = storedCols
+      .filter(col => {
+        if (originalSlugs.includes(col.slug) && !newSlugs.includes(col.slug)) {
+          return false;
+        }
+        return true;
+      })
+      .map(col => {
+        const newDef = defaultCollections.find(c => c.slug === col.slug);
+        if (newDef) {
+          return { ...col, ...newDef };
+        }
+        return col;
+      });
+
+    // Add any completely new collections from defaultCollections
+    defaultCollections.forEach(defCol => {
+      if (!updatedCols.some(c => c.slug === defCol.slug)) {
+        updatedCols.push(defCol);
+      }
+    });
+
+    setStoredData(COLLECTIONS_KEY, updatedCols);
+  }
+
+  if (!localStorage.getItem(PRODUCTS_KEY)) {
+    setStoredData(PRODUCTS_KEY, defaultProducts);
+  } else {
+    const storedProds = getStoredData(PRODUCTS_KEY);
+    const newProdIds = defaultProducts.map(p => p.id);
+
+    const updatedProds = storedProds
+      .filter(prod => {
+        if (originalProdIds.includes(prod.id) && !newProdIds.includes(prod.id)) {
+          return false;
+        }
+        return true;
+      })
+      .map(prod => {
+        const newDef = defaultProducts.find(p => p.id === prod.id);
+        if (newDef) {
+          return { ...prod, ...newDef };
+        }
+        return prod;
+      });
+
+    defaultProducts.forEach(defProd => {
+      if (!updatedProds.some(p => p.id === defProd.id)) {
+        updatedProds.push(defProd);
+      }
+    });
+
+    // Also clean up products whose collection has been deleted
+    const activeCollectionSlugs = updatedCols.map(c => c.slug);
+    const finalProds = updatedProds.filter(p => activeCollectionSlugs.includes(p.collectionSlug));
+
+    setStoredData(PRODUCTS_KEY, finalProds);
+  }
+};
+
+// Auto-seed database when script is loaded
+seedDatabase();
 
 /**
- * Log in to admin panel via the server.
+ * Log in to admin panel.
  * @param {string} password 
  * @returns {Promise<{success: boolean, token: string}>}
  */
 export async function loginAdmin(password) {
-  const response = await fetch(`${API_BASE}/admin/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password }),
-  });
-
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.error || 'Failed to authenticate');
+  // Simple check for password
+  if (password === 'admin') {
+    return { success: true, token: 'mock-token-' + Date.now() };
   }
-
-  return response.json();
+  throw new Error('Incorrect password');
 }
 
 /**
- * Uploads a file to the server.
+ * Uploads a file by converting it to a base64 Data URL.
  * @param {File} file 
  * @returns {Promise<{url: string, filename: string}>}
  */
-export async function uploadImage(file) {
-  const formData = new FormData();
-  formData.append('image', file);
-
-  const response = await fetch(`${API_BASE}/upload`, {
-    method: 'POST',
-    headers: getHeaders(),
-    body: formData,
+export function uploadImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      resolve({ url: reader.result, filename: file.name });
+    };
+    reader.onerror = () => {
+      reject(new Error('Failed to read and upload image'));
+    };
+    reader.readAsDataURL(file);
   });
-
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.error || 'Failed to upload image');
-  }
-
-  return response.json();
 }
 
 /**
@@ -57,9 +132,17 @@ export async function uploadImage(file) {
  * @returns {Promise<Array>}
  */
 export async function getCollections() {
-  const response = await fetch(`${API_BASE}/collections`);
-  if (!response.ok) throw new Error('Failed to fetch collections');
-  return response.json();
+  const collections = getStoredData(COLLECTIONS_KEY);
+  const products = getStoredData(PRODUCTS_KEY);
+
+  // Map productCount dynamically
+  return collections.map(col => {
+    const colProducts = products.filter(p => p.collectionSlug === col.slug);
+    return {
+      ...col,
+      productCount: colProducts.length
+    };
+  });
 }
 
 /**
@@ -68,18 +151,22 @@ export async function getCollections() {
  * @returns {Promise<object>}
  */
 export async function createCollection(collectionData) {
-  const response = await fetch(`${API_BASE}/collections`, {
-    method: 'POST',
-    headers: getHeaders({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify(collectionData),
-  });
-
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.error || 'Failed to create collection');
+  const collections = getStoredData(COLLECTIONS_KEY);
+  const slug = collectionData.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  
+  if (collections.some(c => c.slug === slug)) {
+    throw new Error('Collection with a similar title already exists');
   }
 
-  return response.json();
+  const newCollection = {
+    ...collectionData,
+    slug,
+    weavingHistory: collectionData.weavingHistory || `Heritage handlooms crafted in the legacy of ${collectionData.origin || 'our master weavers'}.`
+  };
+
+  collections.push(newCollection);
+  setStoredData(COLLECTIONS_KEY, collections);
+  return newCollection;
 }
 
 /**
@@ -89,18 +176,18 @@ export async function createCollection(collectionData) {
  * @returns {Promise<object>}
  */
 export async function updateCollection(slug, collectionData) {
-  const response = await fetch(`${API_BASE}/collections/${slug}`, {
-    method: 'PUT',
-    headers: getHeaders({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify(collectionData),
-  });
+  const collections = getStoredData(COLLECTIONS_KEY);
+  const index = collections.findIndex(c => c.slug === slug);
+  if (index === -1) throw new Error('Collection not found');
 
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.error || 'Failed to update collection');
-  }
+  const updatedCollection = {
+    ...collections[index],
+    ...collectionData
+  };
 
-  return response.json();
+  collections[index] = updatedCollection;
+  setStoredData(COLLECTIONS_KEY, collections);
+  return updatedCollection;
 }
 
 /**
@@ -109,17 +196,16 @@ export async function updateCollection(slug, collectionData) {
  * @returns {Promise<{message: string}>}
  */
 export async function deleteCollection(slug) {
-  const response = await fetch(`${API_BASE}/collections/${slug}`, {
-    method: 'DELETE',
-    headers: getHeaders(),
-  });
+  const collections = getStoredData(COLLECTIONS_KEY);
+  const filteredCollections = collections.filter(c => c.slug !== slug);
+  setStoredData(COLLECTIONS_KEY, filteredCollections);
 
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.error || 'Failed to delete collection');
-  }
+  // Delete products associated with this collection
+  const products = getStoredData(PRODUCTS_KEY);
+  const filteredProducts = products.filter(p => p.collectionSlug !== slug);
+  setStoredData(PRODUCTS_KEY, filteredProducts);
 
-  return response.json();
+  return { message: 'Collection and all associated products deleted successfully' };
 }
 
 /**
@@ -128,9 +214,8 @@ export async function deleteCollection(slug) {
  * @returns {Promise<Array>}
  */
 export async function getProducts(slug) {
-  const response = await fetch(`${API_BASE}/collections/${slug}/products`);
-  if (!response.ok) throw new Error('Failed to fetch products');
-  return response.json();
+  const products = getStoredData(PRODUCTS_KEY);
+  return products.filter(p => p.collectionSlug === slug);
 }
 
 /**
@@ -140,18 +225,20 @@ export async function getProducts(slug) {
  * @returns {Promise<object>}
  */
 export async function createProduct(slug, productData) {
-  const response = await fetch(`${API_BASE}/collections/${slug}/products`, {
-    method: 'POST',
-    headers: getHeaders({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify(productData),
-  });
+  const products = getStoredData(PRODUCTS_KEY);
+  const newProduct = {
+    ...productData,
+    id: 'prod-' + Math.random().toString(36).substr(2, 9),
+    collectionSlug: slug,
+    zariType: productData.zariType || "Genuine zari threads",
+    weavingTechnique: productData.weavingTechnique || "Traditional Handloom",
+    borderSize: productData.borderSize || "Medium Border",
+    careInstructions: productData.careInstructions || "Dry clean only"
+  };
 
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.error || 'Failed to create product');
-  }
-
-  return response.json();
+  products.push(newProduct);
+  setStoredData(PRODUCTS_KEY, products);
+  return newProduct;
 }
 
 /**
@@ -162,18 +249,18 @@ export async function createProduct(slug, productData) {
  * @returns {Promise<object>}
  */
 export async function updateProduct(slug, id, productData) {
-  const response = await fetch(`${API_BASE}/collections/${slug}/products/${id}`, {
-    method: 'PUT',
-    headers: getHeaders({ 'Content-Type': 'application/json' }),
-    body: JSON.stringify(productData),
-  });
+  const products = getStoredData(PRODUCTS_KEY);
+  const index = products.findIndex(p => p.id === id);
+  if (index === -1) throw new Error('Product not found');
 
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.error || 'Failed to update product');
-  }
+  const updatedProduct = {
+    ...products[index],
+    ...productData
+  };
 
-  return response.json();
+  products[index] = updatedProduct;
+  setStoredData(PRODUCTS_KEY, products);
+  return updatedProduct;
 }
 
 /**
@@ -183,17 +270,10 @@ export async function updateProduct(slug, id, productData) {
  * @returns {Promise<{message: string}>}
  */
 export async function deleteProduct(slug, id) {
-  const response = await fetch(`${API_BASE}/collections/${slug}/products/${id}`, {
-    method: 'DELETE',
-    headers: getHeaders(),
-  });
-
-  if (!response.ok) {
-    const err = await response.json();
-    throw new Error(err.error || 'Failed to delete product');
-  }
-
-  return response.json();
+  const products = getStoredData(PRODUCTS_KEY);
+  const filteredProducts = products.filter(p => p.id !== id);
+  setStoredData(PRODUCTS_KEY, filteredProducts);
+  return { message: 'Product deleted successfully' };
 }
 
 /**
@@ -201,7 +281,5 @@ export async function deleteProduct(slug, id) {
  * @returns {Promise<Array>}
  */
 export async function getAllProducts() {
-  const response = await fetch(`${API_BASE}/products`);
-  if (!response.ok) throw new Error('Failed to fetch all products');
-  return response.json();
+  return getStoredData(PRODUCTS_KEY);
 }

@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { ArrowRight, Award, ShieldCheck, Globe, Sparkles, ChevronLeft, ChevronRight, Play, Eye, Calendar } from 'lucide-react';
-import { getCollections, getAllProducts } from '../api/admin';
 import { SareeCard, Masonry, ImageTrail, Stack, ScrollStack, ScrollStackItem, Footer } from '../components';
 import { optimizeUnsplashUrl } from '../utils/image';
+import { collections, products } from '../data';
 
 const HERO_IMAGES = [
   "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?q=80&w=600&auto=format&fit=crop",
@@ -47,8 +47,8 @@ const ARTISAN_STEPS = [
 ];
 
 export default function Home() {
-  const [collections, setCollections] = useState([]);
-  const [trendingSarees, setTrendingSarees] = useState([]);
+  const trendingSarees = useMemo(() => products.slice(0, 6), []);
+  const homeCollections = collections;
   const [activeArtisanStep, setActiveArtisanStep] = useState(0);
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
   const scrollRef = useRef(null);
@@ -60,21 +60,6 @@ export default function Home() {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // Load home page data
-  useEffect(() => {
-    async function loadData() {
-      try {
-        const cols = await getCollections();
-        const prods = await getAllProducts();
-        setCollections(cols);
-        setTrendingSarees(prods.slice(0, 6));
-      } catch (err) {
-        console.error('Failed to load database home catalog data:', err);
-      }
-    }
-    loadData();
   }, []);
 
 
@@ -284,13 +269,7 @@ export default function Home() {
             blurAmount={1}
             rotationAmount={0}
           >
-            {[
-              collections[0], // Kanchipuram
-              collections[1], // Banarasi
-              collections[2], // Cotton
-              collections[4], // Organza
-              collections[7]  // Bridal
-            ].filter(Boolean).map((col, idx) => (
+            {homeCollections.map((col, idx) => (
               <ScrollStackItem key={col.slug}>
                 {/* Image side */}
                 <div className="w-full md:w-1/2 h-[220px] md:h-full overflow-hidden relative">
