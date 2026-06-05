@@ -80,7 +80,7 @@ export default function App() {
         <main className="min-h-screen relative z-10 pt-[68px] sm:pt-[76px]">
           <Suspense fallback={<div className="min-h-screen bg-[#0E0C10]" />}>
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Collections />} />
               <Route path="/collections" element={<Collections />} />
               <Route path="/collections/:category" element={<CategoryPage />} />
               <Route path="/saree/:id" element={<SareeDetailPage />} />
